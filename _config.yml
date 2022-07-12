@@ -110,5 +110,5 @@ theme_config:
 deploy:
   type: git
   repo: 'https://github.com/Yiiff/Yiiff.github.io'
-  branch: 'hexo'
-  message: 'Site updated'
+  branch: 'master'
+  message: 'Update Hexo Static Content'
