@@ -1,0 +1,92 @@
+---
+layout: post
+title: Cocoa 初识
+date: 2017-04-01 16:06:0.000000000 +09:00
+---
+
+> 本文仅记录一些在macOS开发中的学习问题
+
+原文: [Raywenderlich](https://www.raywenderlich.com)
+
+## Bind
+
+> 此部分将采用`storyboard`构建界面, binding也是在`Bindings Inspector`中设置
+
+在`macOS`中, `binding`是一个必须掌握的技巧, 我们需要展示数据的元素, 都存在这个属性, 从元素的名称中就能找得到, 含有 **(Bind)** 的就是:
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910279514442.jpg?raw=true)
+
+**Search Results Table View (Bind)** 的绑定流程:
+
+1. 打开`Bindings Inspector`;
+2. 展开`Table Contents`;
+3. 勾选`Bind to`;
+4. 确保`Controller Key`的内容是`arrangedObjects`
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910285046873.png?raw=true)
+
+Build & Run 的效果就是 **Search Results Table View** 中能看到每行的`cell`:
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910286007644.png?raw=true)
+
+
+但是单一设置**Contents**, 是无法实现选中某一个**cell**的同时, 再更新右边元素, 因此需要:
+
+**Binding a Table View’s Selection**
+
+Binding to a selection in a table involves two steps:
+
+1. You first bind the NSArrayController to the table selection.
+2. Then you can bind the properties of the selection object in the NSArrayController to the individual labels and other properties.
+
+Open Main.storyboard. Select the Search Results Table View (Bind) and open the Bindings Inspector.
+Expand the Selection Indexes option in the Table Content section. Check Bind to the Search Results Controller object.
+
+Enter selectionIndexes into the Controller Key box. The table has a selectionIndexes property that contains a set of indexes that the user has selected in the table.
+
+In this case, I’ve set the table view to only allow a single selection. You could work with more than one selection if your app requires it, similar to how Finder lets you select multiple files.
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910309587780.jpg?raw=true)
+
+The NSArrayController object has a selection property that returns an array of objects. When you bind the selectionIndexes property from the table view to the array controller, the selection property will be populated with the objects in the array controller that correspond to the indexes selected in the table.
+The next step is to bind the labels and other UI elements to the selected object.
+Find and select the App Name Label (Bind). Bind its value to the Search Results Controller. Controller Key should be selection, and Model Key Path should be trackName.
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910339847007.png?raw=true)
+
+
+---
+
+同样的, `TableViewCell`的每个元素的`Value`也是可以通过这样的`Bind to`来实现:
+
+Expand the **Value** option and bind to the **Table Cell View** object. Ensure the **Model Key Path** is **objectValue.trackName**.
+
+流程如下:
+
+1. 绑定到 Table View Cell
+2. Model Key Path设置需要展示的模型元素
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910289346845.jpg?raw=true)
+
+对于 **objectValue:**
+
+**objectValue** is a property on the table cell view that gets set by the **NSTableView** on each cell view object from its binding to the table.
+
+**objectValue** is, in this case, equal to the **Result** model object for that row.
+
+**artistName** is property of **Result** model.
+
+Repeat the above process for **Publisher TextField (Bind)** by binding the value of this element to **objectValue.artistName**.
+
+**objectValue**是**TableView**的数据源对象, 若要获取的列表数据源中模型对象的某个属性, 则需要如此: `objectValue.artistName`
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910293825732.jpg?raw=true)
+
+Build & Run 效果如下:
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14910276392893/14910294632052.jpg?raw=true)
+
+后续还有其他控件的相关处理, 这里就不在详细写了, 可以参考原文进行练习
+
+
+

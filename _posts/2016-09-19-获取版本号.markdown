@@ -1,0 +1,14 @@
+---
+layout: post
+title: 获取版本号
+date: 2016-09-19 17:27:18.000000000 +09:00
+---
+
+```
+NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+
+NSString *app_Version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+```
+
+
+

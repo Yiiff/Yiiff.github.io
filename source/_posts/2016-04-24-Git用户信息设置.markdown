@@ -1,0 +1,19 @@
+---
+layout: post
+title: Git 用户信息设置
+date: 2016-04-24 17:19:18.000000000 +09:00
+---
+
+- User Name
+
+```
+git config --global user.name "你的名字"
+```
+- User email
+
+```
+git config --global user.email "你的邮箱"
+```
+
+
+

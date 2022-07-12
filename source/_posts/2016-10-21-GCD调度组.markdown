@@ -1,0 +1,86 @@
+---
+layout: post
+title: GCD调度组
+date: 2016-10-21 16:59:0.000000000 +09:00
+---
+
+情形如下: 后台完成了一个页面的3个接口, 但是发现接口文档上写的是, A接口的a字段是B接口的请求参数, 同时B接口的b字段用作C接口的c字段, 要求: `依次请求 A B C 三个接口`
+
+因此我们需要 `GCD调度组`:
+
+- 方式A
+
+```
+    /* 1. 创建队列 */
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+     /* 2. 创建调度组 */
+    dispatch_group_t group = dispatch_group_create();
+
+    /* 3. 封装任务并把任务添加到队列中
+     参数1: 调度组
+     参数2: 队列
+     参数3: 封装任务
+     */
+    dispatch_group_async(group, globalQueue, ^{
+        NSLog(@"1------%@",[NSThread currentThread]);
+    });
+
+    dispatch_group_async(group, globalQueue, ^{
+        NSLog(@"2------%@",[NSThread currentThread]);
+    });
+
+    dispatch_group_async(group, globalQueue, ^{
+        NSLog(@"3------%@",[NSThread currentThread]);
+    });
+
+     /* 4. 拦截通知, 当队列组中所有的任务都执行完毕的时候调用下面的函数 */
+    dispatch_group_notify(group, globalQueue, ^{
+        NSLog(@"--------执行结束--------");
+    });
+```
+
+以上代码, 必须等到1,2,3三个任务完成了以后才会执行`dispatch_group_notify(,,_)中`block代码块中的代码.
+
+- 方式B
+
+
+```
+    /* 1. 创建队列 */
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+     /* 2. 创建调度组 */
+    dispatch_group_t group = dispatch_group_create();
+
+     /* 3. 进入调度组, 这个函数后面的异步任务都进入调度组中 */
+
+     /*dispatch_group_enter 和 dispatch_group_leave 是成对出现的 */
+    dispatch_group_enter(group);
+
+    dispatch_async(globalQueue, ^{
+        NSLog(@"download1-------%@",[NSThread currentThread]);
+
+        dispatch_group_leave(group);
+    });
+
+    dispatch_group_enter(group);
+
+    dispatch_async(globalQueue, ^{
+        NSLog(@"download2------%@",[NSThread currentThread]);
+
+        dispatch_group_leave(group);
+    });
+
+     /* 这个函数本身是不阻塞的 */
+//    dispatch_group_notify(group, globalQueue, ^{
+//        NSLog(@"--------执行结束--------");
+//    });
+
+     /* 这个函数本身是阻塞的 */
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+
+    NSLog(@"--------执行结束--------");
+}
+```
+
+需要注意的是`dispatch_group_enter(_)` 和 `dispatch_group_leave(_)` 是成对出现的,有入组就有出组, 当调度组中的任务完成以后, 可以使用`dispatch_group_notify(,,_)`来执行后续代码, 也可以使用`dispatch_group_wait(_,_)`这个函数,区别是, 前者是非阻塞的,后者是阻塞的.
+

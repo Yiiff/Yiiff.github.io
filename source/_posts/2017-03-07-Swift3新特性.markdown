@@ -1,0 +1,561 @@
+---
+layout: post
+title: Swift3 新特性
+date: 2017-03-07 16:56:0.000000000 +09:00
+---
+
+> v3 出来已经有一段时间了, 很惭愧现在才好好了解下变动的部分, 果然是懒了, 罪过罪过
+
+#### 1.取消 `++` & `--` 运算符
+
+
+```
+var a = 0
+
+// 自加
+a += 1
+
+// 自减
+a -= 2
+```
+
+####  2. 取消 `C-Style` 的 `for循环`
+
+**用 `区间循环` 代替 长久以来的 `for循环`**
+
+```
+// 前闭后闭 
+// 步长: 1 
+// 正序
+
+for i in 1...10 {
+
+}
+
+// Result:
+// 1 2 3 4 ... 10
+
+/ --------------------------------------------------- /
+
+// 前闭后开 
+// 步长: 1 
+// 倒序
+
+for i in (1..<10).reversed {
+
+}
+
+// Result:
+// 9 ... 3 2 1
+
+/ --------------------------------------------------- /
+
+// 前闭后开
+// 步长: 2
+// 倒序
+for i in (from: 0, to: 10, by: -2) {
+        print(i)
+}
+
+// Result:
+// 8 ... 4 2 0
+
+/ --------------------------------------------------- /
+
+// 前闭后闭 
+
+for i in stride(from: 0, through: 10, by: 2) {
+    print(i)
+}
+
+// Result:
+// 0 2 4 6 ... 10
+
+/// MARK: stride 的参数可以是Int, 也可以是 Float
+```
+
+####  3. Tuples(元组)的变化
+
+**1) 元组的比较:**
+
+```
+let score1 = (chinese: 90, math: 95)
+let score2 = (chinese: 90, math: 100)
+let score3 = (chinese: 100, math: 90)
+
+// tuples 的比较规则:
+// 元组内处在同一维度的元素进行一一比较
+score1 < score2 // true
+score3 < score2 // false
+
+// 若 针对元组内的元素有特殊比较规则时, 可重新定义 < 函数
+// 如下: 优先比较 math
+func < (ti:(Int, Int), t2:(Int, Int)) -> Bool {
+    if t1.1 != t2.1 {
+        return t1.1 < t2.1
+    }
+    return t1.0 < t2.0
+}
+// 重新定义 < 规则后的比较结果
+score1 < score2 // true
+score3 < score2 // true
+```
+
+**2) 元组的解包**
+
+Swift3中取消的前一代中的自动解包功能
+
+```
+func printScore(chinese: Int, math: Int) {
+    print(Chinese score: \(chinese), Math score: \(math))
+}
+// Swift2 时, 在打印元组时, 若函数格式与元组内格式一致, 则会进行自动解包
+printScore(score1)
+// Chinese score: 90, Math score: 95
+
+// Swift3 时, 需明确传入知道参数
+printScore(chinese:score.chinese, math:score.math)
+// Chinese score: 90, Math score: 95
+
+```
+
+**3) 函数的Curry被废弃**
+
+
+```
+// 此坑待填
+```
+
+#### 4. #selector
+按钮或者手势在处理监听方法时, S2与S3有着明显的区别:
+
+
+```
+// Swift2
+button.addTarget(self, action:"click", for: .touchUpInside)
+
+// Swift3
+button.addTarget(self, action:#selector(click), for: .touchUpInside)
+```
+
+#### 5. API命名原则
+
+具体修改的地方, 在码ing中会根据Fix-it调整即可
+
+
+```
+var arr = [0, 1, 2, 3, 4]
+
+// Swift2
+arr.indexOf(3)
+arr.removeAtIndex(3)
+
+// Swift3
+arr.index(of: 3)
+arr.remove(at: 3)
+
+```
+#### 6. 动词 与 名词
+
+尾缀 -ed 表示过去式, -ing表示名词: 有返回值, 不影响原对象
+
+没有这些尾缀, 则为动作, 直接作用于原对象
+
+```
+var str = "Hello Swift"  // Hello Swift
+str.append("!")          // Hello Swift!
+str                      // Hello Swift!
+str.appending("!!!!!!")  // Hello Swift!!!!!!
+str                      // Hello Swift!
+```
+
+
+```
+var score = [1, 2, 4, 3]
+
+score.sorted()      // 1, 2, 3, 4
+score               // 1, 2, 4, 3
+// 不影响原对象
+
+score.sort()        // 1, 2, 3, 4
+score               // 1, 2, 3, 4
+// 影响原对象
+
+score.sorted(by: >) // 4, 3, 2, 1
+score               // 1, 2, 3, 4
+// 不影响原对象
+
+score.sort(by: >)   // 4, 3, 2, 1
+score               // 4, 3, 2, 1
+// 影响原对象
+
+for (index, item) in score.reversed().enumrated() {
+    print(index, item)
+}
+
+/*
+    0 0
+    1 1
+    2 2
+    3 3
+    4 4
+*/
+```
+
+#### 7. enum (枚举)的变化
+
+Swift3 之前, 系统库中存在大量的字符串常量, 在S3中已经全部用`enum`类型取代了
+
+
+```
+// HK_EXTERN NSString * const HKQuantityTypeIdentifierBodyMassIndex;
+// ...
+
+// Swift2
+enum HKQuantityTypeIdentifier : String {
+    case BodyMassIndex
+    case ...
+}
+
+// Swift3
+// enum 内部的分量首字母采用小写字母开头
+enum HKQuantityTypeIdentifier : String {
+    case bodyMassIndex
+    case ...
+}
+
+
+//Swift2
+UIStatusBarStyle.LightContent
+
+//Swift3
+UIStatusBarStyle.lightContent
+```
+
+**Optional类型也是如此**
+
+
+```
+//Swift2
+UIStatusBarStyle.LightContent
+Optional<String>.None
+
+//Swift3
+UIStatusBarStyle.lightContent
+Optional<String>.none
+```
+
+#### 8. where
+
+where的条件限制有很多的用处, 除了循环, `if`也是常用的一个地方
+
+```
+let vector = (4, 0)
+
+// case : 声明一个模式 
+// where: 限制该模式
+
+//Swift2
+if case (let x, 0) where x > 2 && x < 5 {
+    print("It's the vector!")
+}
+
+//Swift3
+if case (let x, 0) , x > 2 && x < 5 {
+    print("It's the vector!")
+}
+```
+
+在S3中, `where`多使用在`泛型`中
+
+
+```
+func anyCommonElements<T: Sequence, U: Sequence>(lhs: T, _ rhs: U) -> Bool 
+    where
+    T.Iterator.Element: Equatable,
+    T.Iterator.Element == U.Iterator.Element {
+        return true
+}
+```
+
+
+#### 9. guard
+`guard` 在S2中遇到多个变量做解包操作时, 可以只使用一个`let`, 但是在S3中, 必须显示的标明每个变量.
+
+**使用`guard`来判断 `error==nil`**
+
+Objective-C
+
+```
+if (error == nil) {
+    // doSomething
+} else {
+    // throw error
+}
+```
+
+Swift 
+
+
+```
+guard (error == nil) else {
+    // throw error
+    return // guard 裡面一定要有 return
+}
+
+// doSomething
+```
+
+
+```
+// 宣告函式
+func doSomething(input:Bool, handler:(obj:AnyObject?) ->Void) ->Void {
+    let someDict:[Int:String] = [1:"One", 2:"Two", 3:"Three"]
+
+    if input {
+        handler(obj: someDict)
+    } else {
+        handler(obj: [1,2,3])
+    }
+}
+
+// 執行函式
+doSomething(true) { (obj) -> Void in
+    // 判斷是否為[Int:String] 的型態(Dictionary)
+    guard let someDict = obj as? [Int:String] else {
+        print("obj not match dictionary")
+        return
+    }
+    // 將 Dictionary 裡面每個 value 印出來
+    for (key, value) in someDict {
+        print("Dictionary key \(key) -  Dictionary value \(value)")
+    }
+    // 自行輸入 key 但會印出 Optional
+    print( "Value of key = 1 is \(someDict[1])" )
+    print( "Value of key = 2 is \(someDict[2])" )
+    print( "Value of key = 3 is \(someDict[3])" )
+}
+
+func doMath(a: Int?, b: Int?, c: Int?) -> Int? {
+
+// Swift2
+//    guard
+//        let a = a , a > 0,
+//        let b = b , b <= 0,
+//        let c = c , c % 2 == 0 else {
+//            return nil
+//        }
+
+// Swift3        
+// , 代替 where
+    guard
+        let a = a, let b = b, let c = c,
+        a > 0, b <= 0, c % 2 == 0 else {
+            return nil
+        }
+    return 0
+}
+```
+
+#### 10. GCD
+
+
+```
+// Swift2
+let queue = dispatch_queue_create("com.test.myqueue",nil)
+dispatch_async(queue) {
+    print("Hello World")
+}
+
+// Swift3
+let queue = DispatchQueue(lable: "com.test.myqueue", nil)
+queue.async {
+    print("Hello World")
+}
+```
+
+#### 11. Never
+
+`Never` 作为函数的返回值的一种类型, 意思是此函数拥有返回值, 但是此返回值在`正常的情况下`永远不会返回给调用此函数的对象
+
+
+```
+func myFatalError() -> Never {
+    // doSomething
+    fatalError()
+}
+
+func mod (_ a: Int, _ b: Int) -> Int {
+    guard b != 0 else {
+    
+        // 调用系统方法
+        // fatalError()
+    
+        // guard 要求如果条件不满足时, else{} 中需要执行 return 或者 break 来跳出 当前的 scope
+        // 若在此处调用自定义的方法, 需要拥有返回值, Never的用处就体现了
+        myFatalError()
+    }
+    return a % b
+}
+
+mod(10, 0)
+```
+
+#### 12. #KeyPath
+
+
+```
+let superviewColor = #KeyPath(UIView.superview.backgroundColor)
+let view = UIView(frame:CGRect(x: 0, y: 0, width: 100, height: 100))
+let lable = UILable(frame:CGRect(x: 0, y: 0, width: 10, height: 10))
+view.backgroundColor = UIColor.blue
+view.addSubview(lable)
+
+lable.value(forKeyPath: superviewColor)     // blue
+lable.superview?.backgroundColor            // blue
+```
+
+#### 13. 新的索引使用
+
+
+```
+let arr = [10, 20, 30, 40]
+let i = arr.startIndex                  // 0
+let next = arr.index(after: i)          // 1
+arr.index(before: next)                 // 0
+
+let str = "Hello, Swift3"               // "Hello, Swift3"
+let j = str.startIndex                  // 0
+let k = str.index(j, offsetBy: 5)       // 5
+str[k]                                  // ","
+str.substring(with: j..<k)              // "Hello"
+```
+
+#### 14. FloatingPoint Protocal
+
+当调用一个函数是, 传的参数类型既包括 `Float` 和 `Double`, 又有可能是 `CGFloat`的时候, 函数的参数就需要遵循 `FloatingPoint` 协议了
+
+
+```
+
+// 泛型的一种应用形式
+func hypotenuse<T: FloatingPoint> (_ a: T, _ b: T) -> T {
+    return (a*a + b*b).squareRoot()
+}
+
+let aFloat: Float = 3.0
+let bFloat: Float = 4.0
+hypotenuse(aFloat, bFloat)                    // 5
+
+let aDouble: Double = 3.0
+let bDouble: Double = 4.0
+hypotenuse(aDouble, bDouble)                  // 5.0
+
+let aCGFloat: CGFloat = 3.0
+let bCGFloat: CGFloat = 4.0
+hypotenuse(aCGFloat, bCGFloat)                // 5
+```
+
+**π**的应用
+
+
+```
+let alpha1: Float = 2.0
+alpha1 * Float.pi
+alpha1 * .pi
+
+let alpha2: CGFloat = 3.0
+alpha2 * CGFloat.pi
+alpha2 * .pi
+```
+
+**Infinity** 无穷
+
+
+```
+func findMin<T: FloatingPoint>(values: [T]) -> T? {
+    var res = T.infinity // 正无穷
+    for v in values {
+        res = v < res ? v : res
+    }
+    return res
+}
+
+```
+
+**NaN** (Not a Number)
+
+
+```
+let myNaN = Double.nan
+let myNaN2 = CGFloat.nan
+
+myNaN > 0                      // false
+myNaN2 <= 0                    // false
+
+func divide<T: FloatingPoint>(_ a: T, _ b: T) -> T {
+    if b.isZero {
+        return T.nan
+    }
+    return a / b
+}
+
+divide(10.0, 0.0)              // nan
+divide(10.0, 0.0).isNaN        // true
+
+let temperatureData = ["21.5", "19.23", "27", "no data", "28.25", "no data", "23"]
+let tempsCelsius = temperatureData.map{ Double($0) ?? .nan }
+/*
+    21.5
+    19.25
+    27.0
+    nan
+    28.25
+    nan
+    23.0
+*/
+
+let badAverage = tempsCelsius.reduce(0.0, +) / Double(tempsCelsius.count)           
+// nan
+// 由于 tempsCelsius 中存在 nan, 所以在 reduce之后, 整个的和是 nan, 因此也无法计算 average
+
+// 过滤出有效数据
+let validTemps = tempsCelsius.filter { !$0.isNaN}
+
+let average = validTemps.reduce(0.0, +) / Double(validTemps.count) 
+```
+
+#### 15. @autoclosure
+
+**聚合运算符 ??**
+
+
+```
+func login(username: String, password: String) -> String {
+    return username
+}
+func generateNickName() -> String {
+    return "nick name"
+}
+let screenName = login(username: "Shayen", password: "123") ?? generateNickName()
+
+// 自定义 ??? 运算符
+infix operator ???
+// @autoclouse 表示可自动转换, 若传入的是一个值, 则自动转换成闭包
+func ???<T>(optional: T?, defaultValue: @autoclosure () -> T) -> T {
+    if let value = optional {
+        return value
+    }
+    return defaultValue()
+}
+
+// 若 login 失败, 则调用 自动生成NickName函数
+let screenName2 = login(username: "Shayen", password: "1234") ??? generateNickName()
+
+// 若 login 失败, 则显示名为 Guest 的用户
+let screenName3 = login(username: "Shayen", password: "1234") ??? "Guest"
+
+```
+
+
+

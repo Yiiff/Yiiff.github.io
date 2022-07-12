@@ -1,0 +1,53 @@
+---
+layout: post
+title: 如何快速获取iOS设备的UDID
+date: 2017-04-23 07:49:0.000000000 +09:00
+---
+
+
+> iOS APP在 没有配置企业证书的时候, 为了让远程的测试和审查人员能够安装最新的APP, 需要这些人员提供iOS设备的UDID, 具体步骤如下
+
+##### 注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本
+
+
+**Step1**
+
+有iOS设备的**Safari**访问此链接: [https://www.pgyer.com/udid](https://www.pgyer.com/udid) , 或者扫描下图中的二维码, 若直接用**Safari**打开, 请移步下方的 **Step 4**
+
+![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/14929034007281.jpg?raw=true)
+
+
+**Step2**
+
+通过**微信**或者**QQ**扫描图中二维码后, 会打开一个网页, 此时点击导航栏右上角的按钮, 如下图
+
+![1](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/1.png?raw=true)
+
+
+**Step3**
+
+点击右上角按钮后, 会出现如下弹出窗口, 这里我们选择**在Safari中打开**:
+
+![2](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/2.png?raw=true)
+
+**Step4**
+
+此时看到的界面是如下的样子, 这与**Step1**中直接用**Safari**访问 [https://www.pgyer.com/udid](https://www.pgyer.com/udid) 是一样的, 这时候点击按钮 **获取UDID**, 如下图:
+
+![3](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/3.png?raw=true)
+
+**Step5**
+
+点击**获取UDID**后, 会跳转到设备的设置App, 需要安装一个 **蒲公英提供获取UDID的插件**, 这时候我们选择右上角的 **安装** 即可, 点击**安装**后会提示需要输入密码, 此时请输入用来**解锁屏幕**的密码就行:
+
+![4](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/4.png?raw=true)
+
+**Step6**
+
+安装成功后, 会跳转会**Safari**, 若未跳转, 请双击手机的**Home**按键, 点击**Safari**, 这个时候, 我们再次点击按钮 **获取UDID**, 就会看到如下界面:
+
+![5](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/5.png?raw=true)
+
+此时我们就回去到当前设备的**UDID**了, 可以选择截图保存的手机相册, 也可以直接在页面上输入**开发者的邮箱**, 点击发送即可!
+
+

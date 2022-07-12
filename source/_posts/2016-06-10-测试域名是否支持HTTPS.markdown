@@ -1,0 +1,16 @@
+---
+layout: post
+title: 测试域名是否支持HTTPS
+date: 2016-06-10 17:25:18.000000000 +09:00
+---
+
+> 若因为IPV6被苹果大会, 不妨用这个方法试试项目中的URL是否支持IVP6
+
+```
+nscurl --verbose --ats-diagnostics https://服务器域名
+```
+
+（Default ATS Secure Connection）这个case测试结果显示是PASS表示服务器HTTPS完全符合ATS标准， 是FAIL的话表示不符合ATS标准。
+
+
+

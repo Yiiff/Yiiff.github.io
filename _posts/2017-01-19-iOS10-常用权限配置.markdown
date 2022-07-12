@@ -1,0 +1,66 @@
+---
+layout: post
+title: iOS10 常用权限配置一览
+date: 2017-01-19 13:59:0.000000000 +09:00
+---
+
+> 升级iOS10之后, App在访问相机等相关功能是, 需要在Info.plist 增加相关的配置, 否则会导致crash
+
+## 已下为常用的配置
+
+- 找到项目中的`.plist`文件, 右键以`Source Code`的方式打开:
+
+![screenshot1](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/iOS10%E9%85%8D%E7%BD%AE1.png?raw=true)
+
+- 从下面选择需要的内容粘贴进`.plist`中:
+
+```
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>App需要您的同意,才能访问媒体资料库</string>
+    
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>App需要您的同意,才能访问蓝牙</string>
+    
+    <key>NSCalendarsUsageDescription</key>
+    <string>App需要您的同意,才能访问日历</string>
+    
+    <key>NSCameraUsageDescription</key>
+    <string>App需要您的同意,才能访问相机</string>
+    
+    <key>NSHealthShareUsageDescription</key>
+    <string>App需要您的同意,才能访问健康分享</string>
+    
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>App需要您的同意,才能访问健康更新 </string>
+    
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>App需要您的同意,才能始终访问位置</string>
+    
+    <key>NSLocationUsageDescription</key>
+    <string>App需要您的同意,才能访问位置</string>
+    
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>App需要您的同意,才能在使用期间访问位置</string>
+    
+    <key>NSMicrophoneUsageDescription</key>
+    <string>App需要您的同意,才能访问麦克风</string>
+    
+    <key>NSMotionUsageDescription</key>
+    <string>App需要您的同意,才能访问运动与健身</string>
+    
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>App需要您的同意,才能访问相册</string>
+    
+    <key>NSRemindersUsageDescription</key>
+    <string>App需要您的同意,才能访问提醒事项</string>
+    
+```
+
+效果如下:
+
+![screenshot2](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/iOS10%E9%85%8D%E7%BD%AE2.png?raw=true)
+
+### 注意:
+
+个别情况下, 苹果审核团队会因为提示语不明确拒绝你的App, 因此需要针对项目中所使用的服务提供明确的功能说明.
+

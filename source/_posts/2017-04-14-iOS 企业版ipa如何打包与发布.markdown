@@ -1,0 +1,26 @@
+---
+layout: post
+title: iOS 企业版ipa如何打包与发布
+date: 2017-04-14 10:54:0.000000000 +09:00
+---
+
+> 应项目需求, 需要提供一个暂时用以委托公司的内部人员使用的App
+
+1. 登录[Apple Developer](https://developer.apple.com/)
+2. 选择图片中的Certification![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921371188324.jpg?raw=true)
+3. 生成相关证书, 若已经存在, 这需要拿到需要使用的证书`.p12`文件和密码![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921373314373.jpg?raw=true)
+4. 设置项目Bundle![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921374234978.jpg?raw=true)
+5. 添加设备
+6. 生成对于**证书**和**bundle**的**Profiles**文件
+7. 在**Xcode**中配置帐号和证书信息, 注意**bundle**要与之前配置的一致1![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921377028297.jpg?raw=true)
+
+8. **Archive**![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921377992005.jpg?raw=true)
+9. 选择**Enterprise**![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921381029091.jpg?raw=true)
+10. 选择之前生成的证书![](https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14921367946563/14921381668402.jpg?raw=true)
+11. 导出到本地即可
+
+### 发布
+
+目前第三方可委托发布的平台很多, [蒲公英](https://www.pgyer.com/) 和 [Fir](https://fir.im/) 都是不错的地方, 腾讯的[Bugly](https://bugly.qq.com/v2/index)也不错.
+
+
