@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="iOS APP在 没有配置企业证书的时候, 为了让远程的测试和审查人员能够安装最新的APP, 需要这些人员提供iOS设备的UDID, 具体步骤如下  注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本Step1 有iOS设备的Safari访问此链接: https:&#x2F;&#x2F;www.pgyer.com&#x2F;udid , 或者扫描下图中的二">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何快速获取iOS设备的UDID">
+<meta property="og:url" content="https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="iOS APP在 没有配置企业证书的时候, 为了让远程的测试和审查人员能够安装最新的APP, 需要这些人员提供iOS设备的UDID, 具体步骤如下  注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本Step1 有iOS设备的Safari访问此链接: https:&#x2F;&#x2F;www.pgyer.com&#x2F;udid , 或者扫描下图中的二">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/14929034007281.jpg?raw=true">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/1.png?raw=true">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/2.png?raw=true">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/3.png?raw=true">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/4.png?raw=true">
+<meta property="og:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/5.png?raw=true">
+<meta property="article:published_time" content="2017-04-22T22:49:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.556Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/14929034007281.jpg?raw=true">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>如何快速获取iOS设备的UDID</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017/05/08/2017-05-08-iOS-NavagationBar-Shadow/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017/04/18/2017-04-18-Cocoa-Window/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&text=如何快速获取iOS设备的UDID"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&is_video=false&description=如何快速获取iOS设备的UDID"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何快速获取iOS设备的UDID&body=Check out this article: https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&name=如何快速获取iOS设备的UDID&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&t=如何快速获取iOS设备的UDID"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F-%E5%9C%A8%E8%8E%B7%E5%8F%96%E6%9F%90%E4%B8%AA%E8%AE%BE%E5%A4%87%E7%9A%84UDID%E6%97%B6-%E8%AF%B7%E5%85%88%E4%B8%8E%E5%BC%80%E5%8F%91%E8%80%85%E8%81%94%E7%B3%BB%E8%B4%B5%E5%8F%B8%E9%9C%80%E8%A6%81%E6%B5%8B%E8%AF%95%E6%88%96%E5%AE%A1%E6%A0%B8%E7%9A%84App%E9%80%82%E9%85%8D%E7%9A%84%E8%AE%BE%E5%A4%87%E7%B1%BB%E5%9E%8B%E5%92%8CiOS%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9C%80%E4%BD%8E%E5%85%BC%E5%AE%B9%E7%89%88%E6%9C%AC"><span class="toc-number">1.</span> <span class="toc-text">注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        如何快速获取iOS设备的UDID
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-04-22T22:49:00.000Z" itemprop="datePublished">2017-04-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>iOS APP在 没有配置企业证书的时候, 为了让远程的测试和审查人员能够安装最新的APP, 需要这些人员提供iOS设备的UDID, 具体步骤如下</p>
+</blockquote>
+<h5 id="注意-在获取某个设备的UDID时-请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本"><a href="#注意-在获取某个设备的UDID时-请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本" class="headerlink" title="注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本"></a>注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本</h5><p><strong>Step1</strong></p>
+<p>有iOS设备的<strong>Safari</strong>访问此链接: <a target="_blank" rel="noopener" href="https://www.pgyer.com/udid">https://www.pgyer.com/udid</a> , 或者扫描下图中的二维码, 若直接用<strong>Safari</strong>打开, 请移步下方的 <strong>Step 4</strong></p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/14929034007281.jpg?raw=true"></p>
+<p><strong>Step2</strong></p>
+<p>通过<strong>微信</strong>或者<strong>QQ</strong>扫描图中二维码后, 会打开一个网页, 此时点击导航栏右上角的按钮, 如下图</p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/1.png?raw=true" alt="1"></p>
+<p><strong>Step3</strong></p>
+<p>点击右上角按钮后, 会出现如下弹出窗口, 这里我们选择<strong>在Safari中打开</strong>:</p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/2.png?raw=true" alt="2"></p>
+<p><strong>Step4</strong></p>
+<p>此时看到的界面是如下的样子, 这与<strong>Step1</strong>中直接用<strong>Safari</strong>访问 <a target="_blank" rel="noopener" href="https://www.pgyer.com/udid">https://www.pgyer.com/udid</a> 是一样的, 这时候点击按钮 <strong>获取UDID</strong>, 如下图:</p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/3.png?raw=true" alt="3"></p>
+<p><strong>Step5</strong></p>
+<p>点击<strong>获取UDID</strong>后, 会跳转到设备的设置App, 需要安装一个 <strong>蒲公英提供获取UDID的插件</strong>, 这时候我们选择右上角的 <strong>安装</strong> 即可, 点击<strong>安装</strong>后会提示需要输入密码, 此时请输入用来<strong>解锁屏幕</strong>的密码就行:</p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/4.png?raw=true" alt="4"></p>
+<p><strong>Step6</strong></p>
+<p>安装成功后, 会跳转会<strong>Safari</strong>, 若未跳转, 请双击手机的<strong>Home</strong>按键, 点击<strong>Safari</strong>, 这个时候, 我们再次点击按钮 <strong>获取UDID</strong>, 就会看到如下界面:</p>
+<p><img src="https://github.com/ZX-ZhouXiao/MarkDown-Photos/blob/master/14929031420289/5.png?raw=true" alt="5"></p>
+<p>此时我们就回去到当前设备的<strong>UDID</strong>了, 可以选择截图保存的手机相册, 也可以直接在页面上输入<strong>开发者的邮箱</strong>, 点击发送即可!</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F-%E5%9C%A8%E8%8E%B7%E5%8F%96%E6%9F%90%E4%B8%AA%E8%AE%BE%E5%A4%87%E7%9A%84UDID%E6%97%B6-%E8%AF%B7%E5%85%88%E4%B8%8E%E5%BC%80%E5%8F%91%E8%80%85%E8%81%94%E7%B3%BB%E8%B4%B5%E5%8F%B8%E9%9C%80%E8%A6%81%E6%B5%8B%E8%AF%95%E6%88%96%E5%AE%A1%E6%A0%B8%E7%9A%84App%E9%80%82%E9%85%8D%E7%9A%84%E8%AE%BE%E5%A4%87%E7%B1%BB%E5%9E%8B%E5%92%8CiOS%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9C%80%E4%BD%8E%E5%85%BC%E5%AE%B9%E7%89%88%E6%9C%AC"><span class="toc-number">1.</span> <span class="toc-text">注意: 在获取某个设备的UDID时, 请先与开发者联系贵司需要测试或审核的App适配的设备类型和iOS系统的最低兼容版本</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&text=如何快速获取iOS设备的UDID"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&is_video=false&description=如何快速获取iOS设备的UDID"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何快速获取iOS设备的UDID&body=Check out this article: https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&title=如何快速获取iOS设备的UDID"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&name=如何快速获取iOS设备的UDID&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2017/04/23/2017-04-23-%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96iOS%E8%AE%BE%E5%A4%87%E7%9A%84UDID/&t=如何快速获取iOS设备的UDID"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

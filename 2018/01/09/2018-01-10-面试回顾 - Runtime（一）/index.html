@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Runtime Objective-C是门运行时的语言，编译时只能确定下来的最后要执行的函数名，最后程序运行时执行的什么内容，只有在运行中才能知道，因此这一特性加大了程序的灵活性，也为解决问题提供的更多的途径。  Runtime的版本需要注意的是，我们所说的Runtime其实是有2个版本的：  Legacy： OC1.0版本时 如果改变了实例变量的设计，需要重新编译它的子类。支持 32bit的OS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试回顾 - Runtime（一）">
+<meta property="og:url" content="https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="Runtime Objective-C是门运行时的语言，编译时只能确定下来的最后要执行的函数名，最后程序运行时执行的什么内容，只有在运行中才能知道，因此这一特性加大了程序的灵活性，也为解决问题提供的更多的途径。  Runtime的版本需要注意的是，我们所说的Runtime其实是有2个版本的：  Legacy： OC1.0版本时 如果改变了实例变量的设计，需要重新编译它的子类。支持 32bit的OS">
+<meta property="og:locale">
+<meta property="og:image" content="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/messaging1.gif">
+<meta property="article:published_time" content="2018-01-09T15:43:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.557Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/messaging1.gif">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>面试回顾 - Runtime（一）</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017/08/01/2017-08-04-Swift%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0%20-%20ObjectMapper/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&text=面试回顾 - Runtime（一）"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&is_video=false&description=面试回顾 - Runtime（一）"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=面试回顾 - Runtime（一）&body=Check out this article: https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&name=面试回顾 - Runtime（一）&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&t=面试回顾 - Runtime（一）"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Runtime"><span class="toc-number">1.</span> <span class="toc-text">Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Runtime%E7%9A%84%E7%89%88%E6%9C%AC"><span class="toc-number">1.0.1.</span> <span class="toc-text">Runtime的版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Runtime%E4%BA%A4%E4%BA%92%E6%96%B9%E5%BC%8F"><span class="toc-number">1.0.2.</span> <span class="toc-text">Runtime交互方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91"><span class="toc-number">1.1.</span> <span class="toc-text">消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E6%96%B9%E6%B3%95%E8%A7%A3%E6%9E%90%EF%BC%8C%E5%B0%86%E5%9C%A8%E4%B8%8B%E7%AF%87%E4%B8%AD%E5%81%9A%E8%A7%A3%E9%87%8A"><span class="toc-number">1.1.1.</span> <span class="toc-text">如何动态方法解析，将在下篇中做解释</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        面试回顾 - Runtime（一）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-01-09T15:43:00.000Z" itemprop="datePublished">2018-01-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><blockquote>
+<p>Objective-C是门运行时的语言，编译时只能确定下来的最后要执行的函数名，最后程序运行时执行的什么内容，只有在运行中才能知道，因此这一特性加大了程序的灵活性，也为解决问题提供的更多的途径。</p>
+</blockquote>
+<h3 id="Runtime的版本"><a href="#Runtime的版本" class="headerlink" title="Runtime的版本"></a>Runtime的版本</h3><p>需要注意的是，我们所说的<code>Runtime</code>其实是有<strong>2</strong>个版本的：</p>
+<ul>
+<li>Legacy： OC1.0版本时<ul>
+<li>如果改变了实例变量的设计，需要重新编译它的子类。支持 32bit的OS X 程序</li>
+</ul>
+</li>
+<li>Modern： OC2.0版本时<ul>
+<li>如果改变了实例变量的设计，不需要重新编译它的子类。支持iphone程序和OS X10.5之后的64bit程序</li>
+</ul>
+</li>
+</ul>
+<h3 id="Runtime交互方式"><a href="#Runtime交互方式" class="headerlink" title="Runtime交互方式"></a>Runtime交互方式</h3><p>既然<code>Runtime</code>能让代码更加的灵活，如何使用成为掌握它的第一步，有<strong>3</strong>种方式可以与其交互：</p>
+<ol>
+<li><strong>Objective-C源代码</strong>：通过编写OC代码，在执行的过程中，编译器会的根据代码生成包含了Runtime特性的数据</li>
+<li><strong>NSObject类中定义的方法</strong>：很多继承自NSObject的类，都集成了其父类中定义的方法，而其父类NSObject的一些方法是能直接向<code>Runtime</code>中获取信息的：<code>respondsToSelector</code>、<code>class</code>…</li>
+<li><strong>Runtime函数</strong></li>
+</ol>
+<h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><p>我们都知道，在C语言中，是存在多继承的，而OC没有，因此消息转发机制就赋予OC能实现类似多继承的效果。</p>
+<p><code>Runtime</code>在运行过程中，就像寻找东西一样，先在当前</p>
+<p>平常能见到的<code>Runtime</code>代码都是下面这个样子的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id objc_msgSend ( id self, SEL op, ... );</span><br></pre></td></tr></table></figure>
+
+<p>那么问题来了，这两个参数代表着什么，如何去理解这个消息转发。</p>
+<p><strong>id</strong></p>
+<p><code>id</code>是一个<strong>指针</strong>，指向类实例的指针，它的定义是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef struct objc_object *id;</span><br></pre></td></tr></table></figure>
+
+<p>那么<code>objc_object</code>这个又是什么呢，通过<code>objc.h</code>文件可以找到相关代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#if !OBJC_TYPES_DEFINED</span><br><span class="line">/// An opaque type that represents an Objective-C class.</span><br><span class="line">typedef struct objc_class *Class;</span><br><span class="line"></span><br><span class="line">/// Represents an instance of a class.</span><br><span class="line">struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/// A pointer to an instance of a class.</span><br><span class="line">typedef struct objc_object *id;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">/// An opaque type that represents a method selector.</span><br><span class="line">typedef struct objc_selector *SEL;</span><br><span class="line"></span><br><span class="line">/// A pointer to the function of a method implementation. </span><br><span class="line">#if !OBJC_OLD_DISPATCH_PROTOTYPES</span><br><span class="line">typedef void (*IMP)(void /* id, SEL, ... */ ); </span><br><span class="line">#else</span><br><span class="line">typedef id _Nullable (*IMP)(id _Nonnull, SEL _Nonnull, ...); </span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>这里能看到<code>objc_object</code>为结构体，内部含有一个<code>isa</code>指针。</p>
+<p>PS：找这块代码的时候，我参考了很多文章，但是没有在<code>objc-private.h</code>文件中看到相关的代码，如果我找到的地方不正确，还请同学们多多包含，我会改正的。</p>
+<p><strong>SEL</strong></p>
+<p><code>SEL</code>就是<code>selector</code>的一种表示方式，作为方法选择器，为了区分方法的<strong>ID</strong>。</p>
+<p>Objc中经常使用<code>@selector()</code>，其实这里用的就是<code>SEL</code>，只不过表示类型不同（Swift中是<code>Selector</code>，Runtime中也不同）。</p>
+<p>有一点需要注意的是，如果两个方法的名字相同，但是接受的参数类型不同，对于<code>SEL</code>来说，都对应了一个<code>selector</code>，因此<strong>Cocoa</strong>中的方法名字会好长好长(方便阅读理解的同时，就是避免这样的事情发生)。</p>
+<p>其实我们日常中经常遇到，例如在封装某个model的时候，对于不同的<code>delegate</code>方法，会在方法名上加以区分，避免<code>respondsToSelector:(SEL)</code>出现问题。</p>
+<p><strong>如何进行消息转发的呢？</strong><br>实际上在我们执行<code>[]</code>语句时，就已经发送消息了，不过只是将消息的接受者和消息括起来而已，到运行时会将消息与方法绑定实现起来。</p>
+<p>这里有4个方法：</p>
+<ul>
+<li><code>objc_msgSend</code></li>
+<li><code>objc_msgSend_stret</code></li>
+<li><code>objc_msgSendSuper</code></li>
+<li><code>objc_msgSendSuper_stret</code></li>
+</ul>
+<p>上面的4个方法都是传递消息，只不过接收消息的对象不同，类型也不同而已。在运行过程中，<code>selector</code>会从上面方法中任取一种执行，比如传递给<strong>超类</strong>，调用含有<code>super</code>相关的方法，以此类推。</p>
+<p>消息传递的整个流程其实就是一个遍历寻找方法的过程</p>
+<ol>
+<li>找到当前类的IMP，通过<code>cache</code>找，找到了就执行</li>
+<li>若<code>cache</code>没找到，就去<code>dispatch_table</code>中找</li>
+<li>如果还没有，就去超类的<code>dispatch_table</code>中找，由于超类最终是继承<code>NSObject</code>，最后会一直找到<code>NSObject</code>为止</li>
+<li>如果还找不到就要开始进入动态方法解析了</li>
+</ol>
+<p><img src="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/messaging1.gif"></p>
+<h3 id="如何动态方法解析，将在下篇中做解释"><a href="#如何动态方法解析，将在下篇中做解释" class="headerlink" title="如何动态方法解析，将在下篇中做解释"></a>如何动态方法解析，将在下篇中做解释</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Runtime"><span class="toc-number">1.</span> <span class="toc-text">Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Runtime%E7%9A%84%E7%89%88%E6%9C%AC"><span class="toc-number">1.0.1.</span> <span class="toc-text">Runtime的版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Runtime%E4%BA%A4%E4%BA%92%E6%96%B9%E5%BC%8F"><span class="toc-number">1.0.2.</span> <span class="toc-text">Runtime交互方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91"><span class="toc-number">1.1.</span> <span class="toc-text">消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E6%96%B9%E6%B3%95%E8%A7%A3%E6%9E%90%EF%BC%8C%E5%B0%86%E5%9C%A8%E4%B8%8B%E7%AF%87%E4%B8%AD%E5%81%9A%E8%A7%A3%E9%87%8A"><span class="toc-number">1.1.1.</span> <span class="toc-text">如何动态方法解析，将在下篇中做解释</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&text=面试回顾 - Runtime（一）"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&is_video=false&description=面试回顾 - Runtime（一）"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=面试回顾 - Runtime（一）&body=Check out this article: https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&title=面试回顾 - Runtime（一）"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&name=面试回顾 - Runtime（一）&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/&t=面试回顾 - Runtime（一）"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="情形如下: 后台完成了一个页面的3个接口, 但是发现接口文档上写的是, A接口的a字段是B接口的请求参数, 同时B接口的b字段用作C接口的c字段, 要求: 依次请求 A B C 三个接口 因此我们需要 GCD调度组:  方式A  1234567891011121314151617181920212223242526&#x2F;* 1. 创建队列 *&#x2F;dispatch_queue_t globalQueue">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GCD调度组">
+<meta property="og:url" content="https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="情形如下: 后台完成了一个页面的3个接口, 但是发现接口文档上写的是, A接口的a字段是B接口的请求参数, 同时B接口的b字段用作C接口的c字段, 要求: 依次请求 A B C 三个接口 因此我们需要 GCD调度组:  方式A  1234567891011121314151617181920212223242526&#x2F;* 1. 创建队列 *&#x2F;dispatch_queue_t globalQueue">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-10-21T07:59:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.552Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>GCD调度组</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017/01/18/2017-01-18-UpdateXocde8-Bugs/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2016/09/19/2016-09-19-%E8%8E%B7%E5%8F%96%E7%89%88%E6%9C%AC%E5%8F%B7/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&text=GCD调度组"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&is_video=false&description=GCD调度组"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GCD调度组&body=Check out this article: https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&name=GCD调度组&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&t=GCD调度组"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        GCD调度组
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-10-21T07:59:00.000Z" itemprop="datePublished">2016-10-21</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>情形如下: 后台完成了一个页面的3个接口, 但是发现接口文档上写的是, A接口的a字段是B接口的请求参数, 同时B接口的b字段用作C接口的c字段, 要求: <code>依次请求 A B C 三个接口</code></p>
+<p>因此我们需要 <code>GCD调度组</code>:</p>
+<ul>
+<li>方式A</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">/* 1. 创建队列 */</span><br><span class="line">dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</span><br><span class="line"> /* 2. 创建调度组 */</span><br><span class="line">dispatch_group_t group = dispatch_group_create();</span><br><span class="line"></span><br><span class="line">/* 3. 封装任务并把任务添加到队列中</span><br><span class="line"> 参数1: 调度组</span><br><span class="line"> 参数2: 队列</span><br><span class="line"> 参数3: 封装任务</span><br><span class="line"> */</span><br><span class="line">dispatch_group_async(group, globalQueue, ^&#123;</span><br><span class="line">    NSLog(@&quot;1------%@&quot;,[NSThread currentThread]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">dispatch_group_async(group, globalQueue, ^&#123;</span><br><span class="line">    NSLog(@&quot;2------%@&quot;,[NSThread currentThread]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">dispatch_group_async(group, globalQueue, ^&#123;</span><br><span class="line">    NSLog(@&quot;3------%@&quot;,[NSThread currentThread]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"> /* 4. 拦截通知, 当队列组中所有的任务都执行完毕的时候调用下面的函数 */</span><br><span class="line">dispatch_group_notify(group, globalQueue, ^&#123;</span><br><span class="line">    NSLog(@&quot;--------执行结束--------&quot;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>以上代码, 必须等到1,2,3三个任务完成了以后才会执行<code>dispatch_group_notify(,,_)中</code>block代码块中的代码.</p>
+<ul>
+<li>方式B</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">    /* 1. 创建队列 */</span><br><span class="line">    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</span><br><span class="line"></span><br><span class="line">     /* 2. 创建调度组 */</span><br><span class="line">    dispatch_group_t group = dispatch_group_create();</span><br><span class="line"></span><br><span class="line">     /* 3. 进入调度组, 这个函数后面的异步任务都进入调度组中 */</span><br><span class="line"></span><br><span class="line">     /*dispatch_group_enter 和 dispatch_group_leave 是成对出现的 */</span><br><span class="line">    dispatch_group_enter(group);</span><br><span class="line"></span><br><span class="line">    dispatch_async(globalQueue, ^&#123;</span><br><span class="line">        NSLog(@&quot;download1-------%@&quot;,[NSThread currentThread]);</span><br><span class="line"></span><br><span class="line">        dispatch_group_leave(group);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    dispatch_group_enter(group);</span><br><span class="line"></span><br><span class="line">    dispatch_async(globalQueue, ^&#123;</span><br><span class="line">        NSLog(@&quot;download2------%@&quot;,[NSThread currentThread]);</span><br><span class="line"></span><br><span class="line">        dispatch_group_leave(group);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">     /* 这个函数本身是不阻塞的 */</span><br><span class="line">//    dispatch_group_notify(group, globalQueue, ^&#123;</span><br><span class="line">//        NSLog(@&quot;--------执行结束--------&quot;);</span><br><span class="line">//    &#125;);</span><br><span class="line"></span><br><span class="line">     /* 这个函数本身是阻塞的 */</span><br><span class="line">    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);</span><br><span class="line"></span><br><span class="line">    NSLog(@&quot;--------执行结束--------&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是<code>dispatch_group_enter(_)</code> 和 <code>dispatch_group_leave(_)</code> 是成对出现的,有入组就有出组, 当调度组中的任务完成以后, 可以使用<code>dispatch_group_notify(,,_)</code>来执行后续代码, 也可以使用<code>dispatch_group_wait(_,_)</code>这个函数,区别是, 前者是非阻塞的,后者是阻塞的.</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&text=GCD调度组"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&is_video=false&description=GCD调度组"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GCD调度组&body=Check out this article: https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&title=GCD调度组"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&name=GCD调度组&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2016/10/21/2016-10-21-GCD%E8%B0%83%E5%BA%A6%E7%BB%84/&t=GCD调度组"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

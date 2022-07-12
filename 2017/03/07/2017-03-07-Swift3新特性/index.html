@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="v3 出来已经有一段时间了, 很惭愧现在才好好了解下变动的部分, 果然是懒了, 罪过罪过  1.取消 ++ &amp; -- 运算符1234567var a &#x3D; 0&#x2F;&#x2F; 自加a +&#x3D; 1&#x2F;&#x2F; 自减a -&#x3D; 2  2. 取消 C-Style 的 for循环用 区间循环 代替 长久以来的 for循环 12345678910111213141516171819202122232425262728293">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift3 新特性">
+<meta property="og:url" content="https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="v3 出来已经有一段时间了, 很惭愧现在才好好了解下变动的部分, 果然是懒了, 罪过罪过  1.取消 ++ &amp; -- 运算符1234567var a &#x3D; 0&#x2F;&#x2F; 自加a +&#x3D; 1&#x2F;&#x2F; 自减a -&#x3D; 2  2. 取消 C-Style 的 for循环用 区间循环 代替 长久以来的 for循环 12345678910111213141516171819202122232425262728293">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-03-07T07:56:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.553Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Swift3 新特性</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017/03/08/2017-03-08-%E7%BA%AA%E5%BF%B5%E6%9B%BE%E7%BB%8F%20JSPatch/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017/03/03/2017-03-03-RandomColor-%E9%9A%8F%E6%9C%BA%E9%A2%9C%E8%89%B2/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&text=Swift3 新特性"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&is_video=false&description=Swift3 新特性"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Swift3 新特性&body=Check out this article: https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&name=Swift3 新特性&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&t=Swift3 新特性"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8F%96%E6%B6%88-amp-%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.</span> <span class="toc-text">1.取消 ++ &amp; -- 运算符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%8F%96%E6%B6%88-C-Style-%E7%9A%84-for%E5%BE%AA%E7%8E%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 取消 C-Style 的 for循环</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Tuples-%E5%85%83%E7%BB%84-%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">3. Tuples(元组)的变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-selector"><span class="toc-number">4.</span> <span class="toc-text">4. #selector</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-API%E5%91%BD%E5%90%8D%E5%8E%9F%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">5. API命名原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%8A%A8%E8%AF%8D-%E4%B8%8E-%E5%90%8D%E8%AF%8D"><span class="toc-number">6.</span> <span class="toc-text">6. 动词 与 名词</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-enum-%E6%9E%9A%E4%B8%BE-%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-number">7.</span> <span class="toc-text">7. enum (枚举)的变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-where"><span class="toc-number">8.</span> <span class="toc-text">8. where</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-guard"><span class="toc-number">9.</span> <span class="toc-text">9. guard</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-GCD"><span class="toc-number">10.</span> <span class="toc-text">10. GCD</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-Never"><span class="toc-number">11.</span> <span class="toc-text">11. Never</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-KeyPath"><span class="toc-number">12.</span> <span class="toc-text">12. #KeyPath</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E6%96%B0%E7%9A%84%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8"><span class="toc-number">13.</span> <span class="toc-text">13. 新的索引使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-FloatingPoint-Protocal"><span class="toc-number">14.</span> <span class="toc-text">14. FloatingPoint Protocal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-autoclosure"><span class="toc-number">15.</span> <span class="toc-text">15. @autoclosure</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Swift3 新特性
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-07T07:56:00.000Z" itemprop="datePublished">2017-03-07</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>v3 出来已经有一段时间了, 很惭愧现在才好好了解下变动的部分, 果然是懒了, 罪过罪过</p>
+</blockquote>
+<h4 id="1-取消-amp-运算符"><a href="#1-取消-amp-运算符" class="headerlink" title="1.取消 ++ &amp; -- 运算符"></a>1.取消 <code>++</code> &amp; <code>--</code> 运算符</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var a = 0</span><br><span class="line"></span><br><span class="line">// 自加</span><br><span class="line">a += 1</span><br><span class="line"></span><br><span class="line">// 自减</span><br><span class="line">a -= 2</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-取消-C-Style-的-for循环"><a href="#2-取消-C-Style-的-for循环" class="headerlink" title="2. 取消 C-Style 的 for循环"></a>2. 取消 <code>C-Style</code> 的 <code>for循环</code></h4><p><strong>用 <code>区间循环</code> 代替 长久以来的 <code>for循环</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">// 前闭后闭 </span><br><span class="line">// 步长: 1 </span><br><span class="line">// 正序</span><br><span class="line"></span><br><span class="line">for i in 1...10 &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Result:</span><br><span class="line">// 1 2 3 4 ... 10</span><br><span class="line"></span><br><span class="line">/ --------------------------------------------------- /</span><br><span class="line"></span><br><span class="line">// 前闭后开 </span><br><span class="line">// 步长: 1 </span><br><span class="line">// 倒序</span><br><span class="line"></span><br><span class="line">for i in (1..&lt;10).reversed &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Result:</span><br><span class="line">// 9 ... 3 2 1</span><br><span class="line"></span><br><span class="line">/ --------------------------------------------------- /</span><br><span class="line"></span><br><span class="line">// 前闭后开</span><br><span class="line">// 步长: 2</span><br><span class="line">// 倒序</span><br><span class="line">for i in (from: 0, to: 10, by: -2) &#123;</span><br><span class="line">        print(i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Result:</span><br><span class="line">// 8 ... 4 2 0</span><br><span class="line"></span><br><span class="line">/ --------------------------------------------------- /</span><br><span class="line"></span><br><span class="line">// 前闭后闭 </span><br><span class="line"></span><br><span class="line">for i in stride(from: 0, through: 10, by: 2) &#123;</span><br><span class="line">    print(i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Result:</span><br><span class="line">// 0 2 4 6 ... 10</span><br><span class="line"></span><br><span class="line">/// MARK: stride 的参数可以是Int, 也可以是 Float</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-Tuples-元组-的变化"><a href="#3-Tuples-元组-的变化" class="headerlink" title="3. Tuples(元组)的变化"></a>3. Tuples(元组)的变化</h4><p><strong>1) 元组的比较:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">let score1 = (chinese: 90, math: 95)</span><br><span class="line">let score2 = (chinese: 90, math: 100)</span><br><span class="line">let score3 = (chinese: 100, math: 90)</span><br><span class="line"></span><br><span class="line">// tuples 的比较规则:</span><br><span class="line">// 元组内处在同一维度的元素进行一一比较</span><br><span class="line">score1 &lt; score2 // true</span><br><span class="line">score3 &lt; score2 // false</span><br><span class="line"></span><br><span class="line">// 若 针对元组内的元素有特殊比较规则时, 可重新定义 &lt; 函数</span><br><span class="line">// 如下: 优先比较 math</span><br><span class="line">func &lt; (ti:(Int, Int), t2:(Int, Int)) -&gt; Bool &#123;</span><br><span class="line">    if t1.1 != t2.1 &#123;</span><br><span class="line">        return t1.1 &lt; t2.1</span><br><span class="line">    &#125;</span><br><span class="line">    return t1.0 &lt; t2.0</span><br><span class="line">&#125;</span><br><span class="line">// 重新定义 &lt; 规则后的比较结果</span><br><span class="line">score1 &lt; score2 // true</span><br><span class="line">score3 &lt; score2 // true</span><br></pre></td></tr></table></figure>
+
+<p><strong>2) 元组的解包</strong></p>
+<p>Swift3中取消的前一代中的自动解包功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">func printScore(chinese: Int, math: Int) &#123;</span><br><span class="line">    print(Chinese score: \(chinese), Math score: \(math))</span><br><span class="line">&#125;</span><br><span class="line">// Swift2 时, 在打印元组时, 若函数格式与元组内格式一致, 则会进行自动解包</span><br><span class="line">printScore(score1)</span><br><span class="line">// Chinese score: 90, Math score: 95</span><br><span class="line"></span><br><span class="line">// Swift3 时, 需明确传入知道参数</span><br><span class="line">printScore(chinese:score.chinese, math:score.math)</span><br><span class="line">// Chinese score: 90, Math score: 95</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3) 函数的Curry被废弃</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// 此坑待填</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-selector"><a href="#4-selector" class="headerlink" title="4. #selector"></a>4. #selector</h4><p>按钮或者手势在处理监听方法时, S2与S3有着明显的区别:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// Swift2</span><br><span class="line">button.addTarget(self, action:&quot;click&quot;, for: .touchUpInside)</span><br><span class="line"></span><br><span class="line">// Swift3</span><br><span class="line">button.addTarget(self, action:#selector(click), for: .touchUpInside)</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-API命名原则"><a href="#5-API命名原则" class="headerlink" title="5. API命名原则"></a>5. API命名原则</h4><p>具体修改的地方, 在码ing中会根据Fix-it调整即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var arr = [0, 1, 2, 3, 4]</span><br><span class="line"></span><br><span class="line">// Swift2</span><br><span class="line">arr.indexOf(3)</span><br><span class="line">arr.removeAtIndex(3)</span><br><span class="line"></span><br><span class="line">// Swift3</span><br><span class="line">arr.index(of: 3)</span><br><span class="line">arr.remove(at: 3)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="6-动词-与-名词"><a href="#6-动词-与-名词" class="headerlink" title="6. 动词 与 名词"></a>6. 动词 与 名词</h4><p>尾缀 -ed 表示过去式, -ing表示名词: 有返回值, 不影响原对象</p>
+<p>没有这些尾缀, 则为动作, 直接作用于原对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var str = &quot;Hello Swift&quot;  // Hello Swift</span><br><span class="line">str.append(&quot;!&quot;)          // Hello Swift!</span><br><span class="line">str                      // Hello Swift!</span><br><span class="line">str.appending(&quot;!!!!!!&quot;)  // Hello Swift!!!!!!</span><br><span class="line">str                      // Hello Swift!</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">var score = [1, 2, 4, 3]</span><br><span class="line"></span><br><span class="line">score.sorted()      // 1, 2, 3, 4</span><br><span class="line">score               // 1, 2, 4, 3</span><br><span class="line">// 不影响原对象</span><br><span class="line"></span><br><span class="line">score.sort()        // 1, 2, 3, 4</span><br><span class="line">score               // 1, 2, 3, 4</span><br><span class="line">// 影响原对象</span><br><span class="line"></span><br><span class="line">score.sorted(by: &gt;) // 4, 3, 2, 1</span><br><span class="line">score               // 1, 2, 3, 4</span><br><span class="line">// 不影响原对象</span><br><span class="line"></span><br><span class="line">score.sort(by: &gt;)   // 4, 3, 2, 1</span><br><span class="line">score               // 4, 3, 2, 1</span><br><span class="line">// 影响原对象</span><br><span class="line"></span><br><span class="line">for (index, item) in score.reversed().enumrated() &#123;</span><br><span class="line">    print(index, item)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">    0 0</span><br><span class="line">    1 1</span><br><span class="line">    2 2</span><br><span class="line">    3 3</span><br><span class="line">    4 4</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-enum-枚举-的变化"><a href="#7-enum-枚举-的变化" class="headerlink" title="7. enum (枚举)的变化"></a>7. enum (枚举)的变化</h4><p>Swift3 之前, 系统库中存在大量的字符串常量, 在S3中已经全部用<code>enum</code>类型取代了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// HK_EXTERN NSString * const HKQuantityTypeIdentifierBodyMassIndex;</span><br><span class="line">// ...</span><br><span class="line"></span><br><span class="line">// Swift2</span><br><span class="line">enum HKQuantityTypeIdentifier : String &#123;</span><br><span class="line">    case BodyMassIndex</span><br><span class="line">    case ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Swift3</span><br><span class="line">// enum 内部的分量首字母采用小写字母开头</span><br><span class="line">enum HKQuantityTypeIdentifier : String &#123;</span><br><span class="line">    case bodyMassIndex</span><br><span class="line">    case ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//Swift2</span><br><span class="line">UIStatusBarStyle.LightContent</span><br><span class="line"></span><br><span class="line">//Swift3</span><br><span class="line">UIStatusBarStyle.lightContent</span><br></pre></td></tr></table></figure>
+
+<p><strong>Optional类型也是如此</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//Swift2</span><br><span class="line">UIStatusBarStyle.LightContent</span><br><span class="line">Optional&lt;String&gt;.None</span><br><span class="line"></span><br><span class="line">//Swift3</span><br><span class="line">UIStatusBarStyle.lightContent</span><br><span class="line">Optional&lt;String&gt;.none</span><br></pre></td></tr></table></figure>
+
+<h4 id="8-where"><a href="#8-where" class="headerlink" title="8. where"></a>8. where</h4><p>where的条件限制有很多的用处, 除了循环, <code>if</code>也是常用的一个地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">let vector = (4, 0)</span><br><span class="line"></span><br><span class="line">// case : 声明一个模式 </span><br><span class="line">// where: 限制该模式</span><br><span class="line"></span><br><span class="line">//Swift2</span><br><span class="line">if case (let x, 0) where x &gt; 2 &amp;&amp; x &lt; 5 &#123;</span><br><span class="line">    print(&quot;It&#x27;s the vector!&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//Swift3</span><br><span class="line">if case (let x, 0) , x &gt; 2 &amp;&amp; x &lt; 5 &#123;</span><br><span class="line">    print(&quot;It&#x27;s the vector!&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在S3中, <code>where</code>多使用在<code>泛型</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func anyCommonElements&lt;T: Sequence, U: Sequence&gt;(lhs: T, _ rhs: U) -&gt; Bool </span><br><span class="line">    where</span><br><span class="line">    T.Iterator.Element: Equatable,</span><br><span class="line">    T.Iterator.Element == U.Iterator.Element &#123;</span><br><span class="line">        return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="9-guard"><a href="#9-guard" class="headerlink" title="9. guard"></a>9. guard</h4><p><code>guard</code> 在S2中遇到多个变量做解包操作时, 可以只使用一个<code>let</code>, 但是在S3中, 必须显示的标明每个变量.</p>
+<p><strong>使用<code>guard</code>来判断 <code>error==nil</code></strong></p>
+<p>Objective-C</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (error == nil) &#123;</span><br><span class="line">    // doSomething</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    // throw error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Swift </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">guard (error == nil) else &#123;</span><br><span class="line">    // throw error</span><br><span class="line">    return // guard 裡面一定要有 return</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// doSomething</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">// 宣告函式</span><br><span class="line">func doSomething(input:Bool, handler:(obj:AnyObject?) -&gt;Void) -&gt;Void &#123;</span><br><span class="line">    let someDict:[Int:String] = [1:&quot;One&quot;, 2:&quot;Two&quot;, 3:&quot;Three&quot;]</span><br><span class="line"></span><br><span class="line">    if input &#123;</span><br><span class="line">        handler(obj: someDict)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        handler(obj: [1,2,3])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 執行函式</span><br><span class="line">doSomething(true) &#123; (obj) -&gt; Void in</span><br><span class="line">    // 判斷是否為[Int:String] 的型態(Dictionary)</span><br><span class="line">    guard let someDict = obj as? [Int:String] else &#123;</span><br><span class="line">        print(&quot;obj not match dictionary&quot;)</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line">    // 將 Dictionary 裡面每個 value 印出來</span><br><span class="line">    for (key, value) in someDict &#123;</span><br><span class="line">        print(&quot;Dictionary key \(key) -  Dictionary value \(value)&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    // 自行輸入 key 但會印出 Optional</span><br><span class="line">    print( &quot;Value of key = 1 is \(someDict[1])&quot; )</span><br><span class="line">    print( &quot;Value of key = 2 is \(someDict[2])&quot; )</span><br><span class="line">    print( &quot;Value of key = 3 is \(someDict[3])&quot; )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func doMath(a: Int?, b: Int?, c: Int?) -&gt; Int? &#123;</span><br><span class="line"></span><br><span class="line">// Swift2</span><br><span class="line">//    guard</span><br><span class="line">//        let a = a , a &gt; 0,</span><br><span class="line">//        let b = b , b &lt;= 0,</span><br><span class="line">//        let c = c , c % 2 == 0 else &#123;</span><br><span class="line">//            return nil</span><br><span class="line">//        &#125;</span><br><span class="line"></span><br><span class="line">// Swift3        </span><br><span class="line">// , 代替 where</span><br><span class="line">    guard</span><br><span class="line">        let a = a, let b = b, let c = c,</span><br><span class="line">        a &gt; 0, b &lt;= 0, c % 2 == 0 else &#123;</span><br><span class="line">            return nil</span><br><span class="line">        &#125;</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="10-GCD"><a href="#10-GCD" class="headerlink" title="10. GCD"></a>10. GCD</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// Swift2</span><br><span class="line">let queue = dispatch_queue_create(&quot;com.test.myqueue&quot;,nil)</span><br><span class="line">dispatch_async(queue) &#123;</span><br><span class="line">    print(&quot;Hello World&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Swift3</span><br><span class="line">let queue = DispatchQueue(lable: &quot;com.test.myqueue&quot;, nil)</span><br><span class="line">queue.async &#123;</span><br><span class="line">    print(&quot;Hello World&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="11-Never"><a href="#11-Never" class="headerlink" title="11. Never"></a>11. Never</h4><p><code>Never</code> 作为函数的返回值的一种类型, 意思是此函数拥有返回值, 但是此返回值在<code>正常的情况下</code>永远不会返回给调用此函数的对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">func myFatalError() -&gt; Never &#123;</span><br><span class="line">    // doSomething</span><br><span class="line">    fatalError()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func mod (_ a: Int, _ b: Int) -&gt; Int &#123;</span><br><span class="line">    guard b != 0 else &#123;</span><br><span class="line">    </span><br><span class="line">        // 调用系统方法</span><br><span class="line">        // fatalError()</span><br><span class="line">    </span><br><span class="line">        // guard 要求如果条件不满足时, else&#123;&#125; 中需要执行 return 或者 break 来跳出 当前的 scope</span><br><span class="line">        // 若在此处调用自定义的方法, 需要拥有返回值, Never的用处就体现了</span><br><span class="line">        myFatalError()</span><br><span class="line">    &#125;</span><br><span class="line">    return a % b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mod(10, 0)</span><br></pre></td></tr></table></figure>
+
+<h4 id="12-KeyPath"><a href="#12-KeyPath" class="headerlink" title="12. #KeyPath"></a>12. #KeyPath</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">let superviewColor = #KeyPath(UIView.superview.backgroundColor)</span><br><span class="line">let view = UIView(frame:CGRect(x: 0, y: 0, width: 100, height: 100))</span><br><span class="line">let lable = UILable(frame:CGRect(x: 0, y: 0, width: 10, height: 10))</span><br><span class="line">view.backgroundColor = UIColor.blue</span><br><span class="line">view.addSubview(lable)</span><br><span class="line"></span><br><span class="line">lable.value(forKeyPath: superviewColor)     // blue</span><br><span class="line">lable.superview?.backgroundColor            // blue</span><br></pre></td></tr></table></figure>
+
+<h4 id="13-新的索引使用"><a href="#13-新的索引使用" class="headerlink" title="13. 新的索引使用"></a>13. 新的索引使用</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">let arr = [10, 20, 30, 40]</span><br><span class="line">let i = arr.startIndex                  // 0</span><br><span class="line">let next = arr.index(after: i)          // 1</span><br><span class="line">arr.index(before: next)                 // 0</span><br><span class="line"></span><br><span class="line">let str = &quot;Hello, Swift3&quot;               // &quot;Hello, Swift3&quot;</span><br><span class="line">let j = str.startIndex                  // 0</span><br><span class="line">let k = str.index(j, offsetBy: 5)       // 5</span><br><span class="line">str[k]                                  // &quot;,&quot;</span><br><span class="line">str.substring(with: j..&lt;k)              // &quot;Hello&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="14-FloatingPoint-Protocal"><a href="#14-FloatingPoint-Protocal" class="headerlink" title="14. FloatingPoint Protocal"></a>14. FloatingPoint Protocal</h4><p>当调用一个函数是, 传的参数类型既包括 <code>Float</code> 和 <code>Double</code>, 又有可能是 <code>CGFloat</code>的时候, 函数的参数就需要遵循 <code>FloatingPoint</code> 协议了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// 泛型的一种应用形式</span><br><span class="line">func hypotenuse&lt;T: FloatingPoint&gt; (_ a: T, _ b: T) -&gt; T &#123;</span><br><span class="line">    return (a*a + b*b).squareRoot()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">let aFloat: Float = 3.0</span><br><span class="line">let bFloat: Float = 4.0</span><br><span class="line">hypotenuse(aFloat, bFloat)                    // 5</span><br><span class="line"></span><br><span class="line">let aDouble: Double = 3.0</span><br><span class="line">let bDouble: Double = 4.0</span><br><span class="line">hypotenuse(aDouble, bDouble)                  // 5.0</span><br><span class="line"></span><br><span class="line">let aCGFloat: CGFloat = 3.0</span><br><span class="line">let bCGFloat: CGFloat = 4.0</span><br><span class="line">hypotenuse(aCGFloat, bCGFloat)                // 5</span><br></pre></td></tr></table></figure>
+
+<p><strong>π</strong>的应用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">let alpha1: Float = 2.0</span><br><span class="line">alpha1 * Float.pi</span><br><span class="line">alpha1 * .pi</span><br><span class="line"></span><br><span class="line">let alpha2: CGFloat = 3.0</span><br><span class="line">alpha2 * CGFloat.pi</span><br><span class="line">alpha2 * .pi</span><br></pre></td></tr></table></figure>
+
+<p><strong>Infinity</strong> 无穷</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func findMin&lt;T: FloatingPoint&gt;(values: [T]) -&gt; T? &#123;</span><br><span class="line">    var res = T.infinity // 正无穷</span><br><span class="line">    for v in values &#123;</span><br><span class="line">        res = v &lt; res ? v : res</span><br><span class="line">    &#125;</span><br><span class="line">    return res</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>NaN</strong> (Not a Number)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">let myNaN = Double.nan</span><br><span class="line">let myNaN2 = CGFloat.nan</span><br><span class="line"></span><br><span class="line">myNaN &gt; 0                      // false</span><br><span class="line">myNaN2 &lt;= 0                    // false</span><br><span class="line"></span><br><span class="line">func divide&lt;T: FloatingPoint&gt;(_ a: T, _ b: T) -&gt; T &#123;</span><br><span class="line">    if b.isZero &#123;</span><br><span class="line">        return T.nan</span><br><span class="line">    &#125;</span><br><span class="line">    return a / b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">divide(10.0, 0.0)              // nan</span><br><span class="line">divide(10.0, 0.0).isNaN        // true</span><br><span class="line"></span><br><span class="line">let temperatureData = [&quot;21.5&quot;, &quot;19.23&quot;, &quot;27&quot;, &quot;no data&quot;, &quot;28.25&quot;, &quot;no data&quot;, &quot;23&quot;]</span><br><span class="line">let tempsCelsius = temperatureData.map&#123; Double($0) ?? .nan &#125;</span><br><span class="line">/*</span><br><span class="line">    21.5</span><br><span class="line">    19.25</span><br><span class="line">    27.0</span><br><span class="line">    nan</span><br><span class="line">    28.25</span><br><span class="line">    nan</span><br><span class="line">    23.0</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">let badAverage = tempsCelsius.reduce(0.0, +) / Double(tempsCelsius.count)           </span><br><span class="line">// nan</span><br><span class="line">// 由于 tempsCelsius 中存在 nan, 所以在 reduce之后, 整个的和是 nan, 因此也无法计算 average</span><br><span class="line"></span><br><span class="line">// 过滤出有效数据</span><br><span class="line">let validTemps = tempsCelsius.filter &#123; !$0.isNaN&#125;</span><br><span class="line"></span><br><span class="line">let average = validTemps.reduce(0.0, +) / Double(validTemps.count) </span><br></pre></td></tr></table></figure>
+
+<h4 id="15-autoclosure"><a href="#15-autoclosure" class="headerlink" title="15. @autoclosure"></a>15. @autoclosure</h4><p><strong>聚合运算符 ??</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">func login(username: String, password: String) -&gt; String &#123;</span><br><span class="line">    return username</span><br><span class="line">&#125;</span><br><span class="line">func generateNickName() -&gt; String &#123;</span><br><span class="line">    return &quot;nick name&quot;</span><br><span class="line">&#125;</span><br><span class="line">let screenName = login(username: &quot;Shayen&quot;, password: &quot;123&quot;) ?? generateNickName()</span><br><span class="line"></span><br><span class="line">// 自定义 ??? 运算符</span><br><span class="line">infix operator ???</span><br><span class="line">// @autoclouse 表示可自动转换, 若传入的是一个值, 则自动转换成闭包</span><br><span class="line">func ???&lt;T&gt;(optional: T?, defaultValue: @autoclosure () -&gt; T) -&gt; T &#123;</span><br><span class="line">    if let value = optional &#123;</span><br><span class="line">        return value</span><br><span class="line">    &#125;</span><br><span class="line">    return defaultValue()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 若 login 失败, 则调用 自动生成NickName函数</span><br><span class="line">let screenName2 = login(username: &quot;Shayen&quot;, password: &quot;1234&quot;) ??? generateNickName()</span><br><span class="line"></span><br><span class="line">// 若 login 失败, 则显示名为 Guest 的用户</span><br><span class="line">let screenName3 = login(username: &quot;Shayen&quot;, password: &quot;1234&quot;) ??? &quot;Guest&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8F%96%E6%B6%88-amp-%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.</span> <span class="toc-text">1.取消 ++ &amp; -- 运算符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%8F%96%E6%B6%88-C-Style-%E7%9A%84-for%E5%BE%AA%E7%8E%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 取消 C-Style 的 for循环</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Tuples-%E5%85%83%E7%BB%84-%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">3. Tuples(元组)的变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-selector"><span class="toc-number">4.</span> <span class="toc-text">4. #selector</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-API%E5%91%BD%E5%90%8D%E5%8E%9F%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">5. API命名原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%8A%A8%E8%AF%8D-%E4%B8%8E-%E5%90%8D%E8%AF%8D"><span class="toc-number">6.</span> <span class="toc-text">6. 动词 与 名词</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-enum-%E6%9E%9A%E4%B8%BE-%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-number">7.</span> <span class="toc-text">7. enum (枚举)的变化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-where"><span class="toc-number">8.</span> <span class="toc-text">8. where</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-guard"><span class="toc-number">9.</span> <span class="toc-text">9. guard</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-GCD"><span class="toc-number">10.</span> <span class="toc-text">10. GCD</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-Never"><span class="toc-number">11.</span> <span class="toc-text">11. Never</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-KeyPath"><span class="toc-number">12.</span> <span class="toc-text">12. #KeyPath</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E6%96%B0%E7%9A%84%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8"><span class="toc-number">13.</span> <span class="toc-text">13. 新的索引使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-FloatingPoint-Protocal"><span class="toc-number">14.</span> <span class="toc-text">14. FloatingPoint Protocal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-autoclosure"><span class="toc-number">15.</span> <span class="toc-text">15. @autoclosure</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&text=Swift3 新特性"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&is_video=false&description=Swift3 新特性"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Swift3 新特性&body=Check out this article: https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&title=Swift3 新特性"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&name=Swift3 新特性&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2017/03/07/2017-03-07-Swift3%E6%96%B0%E7%89%B9%E6%80%A7/&t=Swift3 新特性"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Runtime 上篇中提到了Runtime的消息转发机制，这篇着重介绍下在项目的实际开发中的Runtime。  动态解析之前提到Runtime有3种使用途径：Objc源码、继承自NSObject类中定义的方法和Runtime函数。 这里用下面这行代码举例，简单的回顾下消息传递： 1[person talking];  这行代码会向person发送talking消息，但是消息的最后接收者不一定是pe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试回顾 - Runtime（二）">
+<meta property="og:url" content="https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="Runtime 上篇中提到了Runtime的消息转发机制，这篇着重介绍下在项目的实际开发中的Runtime。  动态解析之前提到Runtime有3种使用途径：Objc源码、继承自NSObject类中定义的方法和Runtime函数。 这里用下面这行代码举例，简单的回顾下消息传递： 1[person talking];  这行代码会向person发送talking消息，但是消息的最后接收者不一定是pe">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-01-11T13:00:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.557Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>面试回顾 - Runtime（二）</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/02/06/2018-02-06-Unity%20Official%20Tutorials%20-%20Input%20GetButton%20and%20GetKey/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/01/09/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&text=面试回顾 - Runtime（二）"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&is_video=false&description=面试回顾 - Runtime（二）"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=面试回顾 - Runtime（二）&body=Check out this article: https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&name=面试回顾 - Runtime（二）&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&t=面试回顾 - Runtime（二）"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Runtime"><span class="toc-number">1.</span> <span class="toc-text">Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">动态解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Runtime%E5%9C%A8%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">Runtime在实际开发中的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#KVO"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">KVO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSNull"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">NSNull</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">数组越界</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        面试回顾 - Runtime（二）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-01-11T13:00:00.000Z" itemprop="datePublished">2018-01-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><blockquote>
+<p>上篇中提到了<code>Runtime</code>的消息转发机制，这篇着重介绍下在项目的实际开发中的<code>Runtime</code>。</p>
+</blockquote>
+<h2 id="动态解析"><a href="#动态解析" class="headerlink" title="动态解析"></a>动态解析</h2><p>之前提到<code>Runtime</code>有<strong>3</strong>种使用途径：<code>Objc源码</code>、继承自<code>NSObject</code>类中定义的方法和<code>Runtime</code>函数。</p>
+<p>这里用下面这行代码举例，简单的回顾下<strong>消息传递</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[person talking];</span><br></pre></td></tr></table></figure>
+
+<p>这行代码会向<code>person</code>发送<code>talking</code>消息，但是消息的最后接收者不一定是<code>person</code>，而寻找消息最终接收者的过程就是一个<code>消息传递</code>的过程。</p>
+<p>–</p>
+<p>这里是<code>objc_object </code>的结构体定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">struct objc_object &#123;</span><br><span class="line">    Class isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里是<code>objc_class </code>的结构体定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">struct objc_class &#123;</span><br><span class="line">    Class isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line">#if !__OBJC2__</span><br><span class="line">    Class super_class                                        OBJC2_UNAVAILABLE;</span><br><span class="line">    const char *name                                         OBJC2_UNAVAILABLE;</span><br><span class="line">    long version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    long info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    long instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    struct objc_ivar_list *ivars                             OBJC2_UNAVAILABLE;</span><br><span class="line">    struct objc_method_list **methodLists                    OBJC2_UNAVAILABLE;</span><br><span class="line">    struct objc_cache *cache                                 OBJC2_UNAVAILABLE;</span><br><span class="line">    struct objc_protocol_list *protocols                     OBJC2_UNAVAILABLE;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
+
+<p>消息传递的核心是<code>isa</code>指针和<code>dispatch_table</code>分发表。以上面的<code>[person talking]</code>为例，流程如下：</p>
+<ol>
+<li>根据<code>person</code>对象的<code>isa</code>指针获取该对象所属的<strong>类</strong>，接着在<code>类对象</code>的方法列表中寻找<code>talking</code>方法。若找到了，则<code>person</code>是消息的最终<strong>接收者</strong>，到此也就结束了；若没有对应的方法，则进行下面的内容；</li>
+<li>上步获取到的<code>person</code>的<strong>类对象</strong>，根据<code>super_class</code>获取到该类的<strong>父类</strong>，在<strong>父类</strong>的方法列表中寻找<code>talking</code>方法。有则返回并终止，没有则重复此操作，知道找到<code>NSObject</code>为止；</li>
+<li>若寻找到<code>NSObject</code>仍然未找到<code>talking</code>方法，意味着没有能够接收此消息的对象，这时候会发生<code>unrecognize selector</code>的崩溃。<strong>下次再遇到这种crash，至少知道为什么会崩溃了。</strong>然而在<code>crash</code>之前，仍然有<strong>3</strong>次机会去拯救： 1). <code>resolveInstanceMethod </code>：此方法返回一个<code>BOOL</code>值，如果是<code>YES</code>，则重启一次消息传递过程，如果是<code>NO</code>，则执行下一步。<strong>实际中，如果有未能识别的消息，可以在此方法中添加对应的消息，然后返回YES，即可避免crash：</strong> 在<code>emptyMethod</code>中不做任何操作即可避免<strong>崩溃</strong>。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">   	BOOL isInstanced = [self resolveInstanceMethod:sel];</span><br><span class="line">    if(!isInstanced)&#123;</span><br><span class="line">   	    class_addMethod([self class],sel,(IMP)emptyMethod,&quot;v@:&quot;);</span><br><span class="line">		return YES;</span><br><span class="line">    &#125;</span><br><span class="line">   	return isInstanced;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+ 2). <code>forwardingTargetForSelector </code>：此方法返回一个对象，这里提供了将<strong>消息转发</strong>给其他对象的机会，只要该方法返回的不是<code>nil</code>和<code>self</code>，<strong>消息转发</strong>的过程就会重启： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">   	if(aSelector == @selector(testSelector:))&#123;</span><br><span class="line">      	 	return testObject;</span><br><span class="line">   	&#125;</span><br><span class="line">   	return [super forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+ 上段代码返回的<code>testObject</code>对象就会替代之前的<code>person</code>，执行<code>[testObject talking]</code>，消息传递会重新启动。 3). <code>methodSignatureForSelector</code>和<code>forwardingInvocation</code>：前者会返回一个<strong>方法签名</strong>，如果返回的是<code>nil</code>，则抛出异常<code>unrecognized selector</code>，否则<code>Runtime</code>会根据方法签名类创建一个<code>NSInvocation</code>对象，然后调用<code>forwardingInvocation</code>方法，而<code>forwardingInvocation</code>执行的操作和<code>forwardingTargetForSelector</code>类似，将消息转发给其他对象。</li>
+</ol>
+<p>以上就是<strong>消息传递</strong>的过程。</p>
+<h2 id="Runtime在实际开发中的使用"><a href="#Runtime在实际开发中的使用" class="headerlink" title="Runtime在实际开发中的使用"></a>Runtime在实际开发中的使用</h2><blockquote>
+<p>在实际的开发中，会有很多<code>crash</code>的情况，以下几种是比较常见且可以用<code>Runtime</code>解决的。</p>
+</blockquote>
+<h4 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h4><p><code>KVO</code>的实现依赖<code>Runtime</code>，苹果通过<code>isa-swizzling</code>的方式实现了<code>KVO</code>。任何一个对象中都含有一个<code>isa</code>，<code>KVO</code>就是修改<code>isa</code>的指向实现的。</p>
+<h4 id="NSNull"><a href="#NSNull" class="headerlink" title="NSNull"></a>NSNull</h4><p>服务器与App在开发中都会约定一些<code>default value</code>应对一些无数据的情况，但是无法避免的总会出现返回空对象<code>null</code>，而App在使用这个空对象发送消息的时候，就会引起<code>unrecognized selector</code>。</p>
+<p>与服务端约定默认值也就成了开发前一定要做的事情，但是通过<code>Runtime</code>也可以避免这种情况，从上面的<strong>消息转发</strong>逻辑中我们可以知道如何避免<code>crash</code>，因此我们可以使用同样的方法，即便服务端返回了空对象，向空对象发消息时，使用<strong>消息转发</strong>，就能避免崩溃。这里我们需要在<strong>消息转发</strong>最后一步中处理这种情况，在<code>methodSignatureForSelector</code>返回方法签名，在<code>forwardingInvocation</code>进行消息转发:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector</span><br><span class="line">&#123;</span><br><span class="line">    @synchronized([self class])</span><br><span class="line">    &#123;</span><br><span class="line">        //look up method signature</span><br><span class="line">        NSMethodSignature *signature = [super methodSignatureForSelector:selector];</span><br><span class="line">        if (!signature)</span><br><span class="line">        &#123;</span><br><span class="line">            //not supported by NSNull, search other classes</span><br><span class="line">            // 在这里构造NSMethodSignature</span><br><span class="line">        &#125;</span><br><span class="line">        return signature;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)invocation</span><br><span class="line">&#123;</span><br><span class="line">    invocation.target = nil;</span><br><span class="line">    [invocation invoke];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="数组越界"><a href="#数组越界" class="headerlink" title="数组越界"></a>数组越界</h4><p>数组越界可以说让很多人头疼，并不是不知道如何避免，而是总有一些地方是我们在写逻辑的时候忽略了判断。</p>
+<p>使用<code>Runtime</code>同样能避免这个问题，前提是需要在开发前约定好。通过给<code>NSArray</code>、<code>NSMutableArray</code>创建<code>Categary</code>，在分类中处理这种情况，在开发时遇到了<code>Array</code>时注意使用分类中的方法即可，这就是为什么需要在开发前约定好，否则一样会出现越界的情况。</p>
+<p><strong>Method Swizzling</strong>可以解决越界问题，这就是ObjC动态语言的优点，运行时动态替换方法的实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load</span><br><span class="line">&#123;</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        /* 数组有内容obj类型才是__NSArrayI ,NSArray在runtime中对应的是__NSArrayI */</span><br><span class="line">        NSArray* obj = [[NSArray alloc] initWithObjects:@0, @1, nil];</span><br><span class="line">        [obj swizzleInstanceMethod:@selector(objectAtIndex:) withMethod:@selector(hookObjectAtIndex:)];</span><br><span class="line">        [obj release]; </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id) hookObjectAtIndex:(NSUInteger)index &#123;</span><br><span class="line">    if (index &lt; self.count) &#123;</span><br><span class="line">        return [self hookObjectAtIndex:index];</span><br><span class="line">    &#125;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Runtime"><span class="toc-number">1.</span> <span class="toc-text">Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">动态解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Runtime%E5%9C%A8%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">Runtime在实际开发中的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#KVO"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">KVO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSNull"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">NSNull</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">数组越界</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&text=面试回顾 - Runtime（二）"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&is_video=false&description=面试回顾 - Runtime（二）"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=面试回顾 - Runtime（二）&body=Check out this article: https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&title=面试回顾 - Runtime（二）"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&name=面试回顾 - Runtime（二）&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/01/11/2018-01-10-%E9%9D%A2%E8%AF%95%E5%9B%9E%E9%A1%BE%20-%20Runtime%EF%BC%88%E4%BA%8C%EF%BC%89/&t=面试回顾 - Runtime（二）"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
