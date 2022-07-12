@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="针对循环引用这种问题, 我们有可以通过__weak和__strong来解决.   weakSelf: 不增加self的引用计数，然后你还可以使用它，所以它能防止循环引用（该释放释放，和weakSelf怎么用完全没关系） strongSelf: 在定义的区域内保证指向的内容不被释放，所以他用在确保代码执行的时候。（防止self变成nil，延迟self的生命）  简单的Block循环引用问题这里通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS Block嵌套引起的循环引用">
+<meta property="og:url" content="https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/index.html">
+<meta property="og:site_name" content="Journey">
+<meta property="og:description" content="针对循环引用这种问题, 我们有可以通过__weak和__strong来解决.   weakSelf: 不增加self的引用计数，然后你还可以使用它，所以它能防止循环引用（该释放释放，和weakSelf怎么用完全没关系） strongSelf: 在定义的区域内保证指向的内容不被释放，所以他用在确保代码执行的时候。（防止self变成nil，延迟self的生命）  简单的Block循环引用问题这里通过">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-03-05T16:04:00.000Z">
+<meta property="article:modified_time" content="2022-07-12T09:52:23.557Z">
+<meta property="article:author" content="Jo">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>iOS Block嵌套引起的循环引用</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/03/06/2018-03-06-iOS%20App%E5%90%AF%E5%8A%A8%E6%97%B6%E9%9A%90%E8%97%8FStatusBar/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/02/20/2018-02-20-Unity%20Official%20Tutorials%20-%20Input%20GetAxis/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&text=iOS Block嵌套引起的循环引用"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&is_video=false&description=iOS Block嵌套引起的循环引用"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS Block嵌套引起的循环引用&body=Check out this article: https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&name=iOS Block嵌套引起的循环引用&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&t=iOS Block嵌套引起的循环引用"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84Block%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">简单的Block循环引用问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block%E5%B5%8C%E5%A5%97%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">Block嵌套的循环引用问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%8F%E5%88%A9"><span class="toc-number">3.</span> <span class="toc-text">福利</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">3.1.</span> <span class="toc-text">记在最后</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        iOS Block嵌套引起的循环引用
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Jo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-03-05T16:04:00.000Z" itemprop="datePublished">2018-03-06</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>针对循环引用这种问题, 我们有可以通过__weak和__strong来解决.</p>
+</blockquote>
+<ul>
+<li><strong>weakSelf</strong>: 不增加self的引用计数，然后你还可以使用它，所以它能防止循环引用（该释放释放，和weakSelf怎么用完全没关系）</li>
+<li><strong>strongSelf</strong>: 在定义的区域内保证指向的内容不被释放，所以他用在确保代码执行的时候。（防止self变成nil，延迟self的生命）</li>
+</ul>
+<h2 id="简单的Block循环引用问题"><a href="#简单的Block循环引用问题" class="headerlink" title="简单的Block循环引用问题"></a>简单的Block循环引用问题</h2><p>这里通过一个简单的Demo来演示最基本的一种循环引用:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@interface ViewController ()</span><br><span class="line">@property (nonatomic, copy) void (^testBlock)(void);</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    self.testBlock = ^&#123;</span><br><span class="line">    </span><br><span class="line">        /// 这里导致了循环引用</span><br><span class="line">        self; /// Capturing &#x27;self&#x27; strongly in this block is likely to lead to a retain cycle</span><br><span class="line">        </span><br><span class="line">        /// 原因:</span><br><span class="line">        /// 首先, self强引用着testBlock,</span><br><span class="line">        /// 其次, block内部使用了self, 因此block也强引用着self,</span><br><span class="line">        /// 因此这就构成了一个循环引用.</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<p>那么通过<code>__weak</code>和<code>__strong</code>如何处理呢? 以上一份代码为例:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@interface ViewController ()</span><br><span class="line">@property (nonatomic, copy) void (^testBlock)(void);</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    __weak typeof(self)weakSelf = self;</span><br><span class="line">    self.testBlock = ^&#123;</span><br><span class="line">        __strong typeof(self)strongSelf = weakSelf;</span><br><span class="line">        </span><br><span class="line">        strongSelf; /// 这里再使用strongSelf时, 就不会产生循环引用了.</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>通过上面这段代码, 知道了通过<code>__weak</code>和<code>__strong</code>如何避免循环引用, 但是这并不是说所有的block都需要这样的操作, 系统的某些block api中, UIView的block版本写动画时不需要考虑, 但也有一些api需要考虑:</p>
+<p>所谓”引用循环”是指双向的强引用, 所以那些”单向的强引用”(block 强引用 self)没有问题, 比如这些:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[UIView animateWithDuration:duration animations:^&#123; [self.superview layoutIfNeeded]; &#125;];</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[NSOperationQueue mainQueue] addOperationWithBlock:^&#123; self.someProperty = xyz; &#125;]; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[[NSNotificationCenter defaultCenter] addObserverForName:@&quot;someNotification&quot; </span><br><span class="line">                                                 object:nil </span><br><span class="line">                          queue:[NSOperationQueue mainQueue]</span><br><span class="line">                                             usingBlock:^(NSNotification * notification) &#123;</span><br><span class="line">                                                   self.someProperty = xyz; &#125;]; </span><br></pre></td></tr></table></figure>
+
+<p>这些情况不需要考虑”引用循环”.</p>
+<p>但如果你使用一些参数中可能含有 ivar 的系统 api ,如 GCD 、NSNotificationCenter就要小心一点: 比如GCD 内部如果引用了 self, 而且 GCD 的其他参数是 ivar, 则要考虑到循环引用:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">__weak __typeof__(self) weakSelf = self;</span><br><span class="line">dispatch_group_async(_operationsGroup, _operationsQueue, ^</span><br><span class="line">&#123;</span><br><span class="line">__typeof__(self) strongSelf = weakSelf;</span><br><span class="line">[strongSelf doSomething];</span><br><span class="line">[strongSelf doSomethingElse];</span><br><span class="line">&#125; );</span><br><span class="line"></span><br><span class="line">/ *********************************************************************************** /</span><br><span class="line"></span><br><span class="line"> __weak __typeof__(self) weakSelf = self;</span><br><span class="line"> _observer = [[NSNotificationCenter defaultCenter] addObserverForName:@&quot;testKey&quot;</span><br><span class="line">                                                               object:nil</span><br><span class="line">                                                                queue:nil</span><br><span class="line">                                                           usingBlock:^(NSNotification *note) &#123;</span><br><span class="line">     __typeof__(self) strongSelf = weakSelf;</span><br><span class="line">     [strongSelf dismissModalViewControllerAnimated:YES];</span><br><span class="line"> &#125;];</span><br></pre></td></tr></table></figure>
+
+<h2 id="Block嵌套的循环引用问题"><a href="#Block嵌套的循环引用问题" class="headerlink" title="Block嵌套的循环引用问题"></a>Block嵌套的循环引用问题</h2><p>如果在block内部再调用block, 那么这种情况下, 如何处理<code>__weak</code>和<code>__strong</code>, 这里有一个<strong>Demo</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@interface ViewController ()</span><br><span class="line">@property (nonatomic, copy) void (^testBlock)(void);</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    __weak typeof(self)weakSelf = self;</span><br><span class="line">    self.testBlock = ^&#123;</span><br><span class="line">        /// Level 1</span><br><span class="line">        __strong typeof(self)strongSelf = weakSelf;</span><br><span class="line">        strongSelf.testBlock = ^&#123;</span><br><span class="line">            /// Level 2</span><br><span class="line">            /// 这里导致了循环引用</span><br><span class="line">            strongSelf; /// Capturing &#x27;strongSelf&#x27; strongly in this block is likely to lead to a retain cycle</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<p><code>Level 1</code>中, self被block强引用了, 那么在<code>Level 1</code>的block中再次调用block, 那么<code>Level 2</code>外的<code>self</code>为<code>strongSelf</code>, 因此<code>Level 2</code>中使用<code>self</code>时, 又回到block内外都是<strong>强引用</strong>的状态, 因此这里可以这么处理:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@interface ViewController ()</span><br><span class="line">@property (nonatomic, copy) void (^testBlock)(void);</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    __weak typeof(self) weakSelf = self;</span><br><span class="line">    self.testBlock = ^&#123;</span><br><span class="line">        __strong typeof(self) strongSelf = weakSelf;</span><br><span class="line">        </span><br><span class="line">        __strong typeof(self) wSelf = strongSelf;</span><br><span class="line">        strongSelf.testBlock = ^&#123;</span><br><span class="line">            __strong typeof(self) sSelf = wSelf;</span><br><span class="line">            [sSelf initBaseUI]; /// 这里再使用self则不会造成循环引用了.</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<h2 id="福利"><a href="#福利" class="headerlink" title="福利"></a>福利</h2><p>如何查看一个对象的<code>RetainCount</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf(&quot;retain count = %ld\n&quot;,CFGetRetainCount((__bridge CFTypeRef)(obj)));</span><br></pre></td></tr></table></figure>
+
+<p>检测代码中是否存在循环引用问题，可使用 Facebook 开源的一个检测工具<a target="_blank" rel="noopener" href="https://github.com/facebook/FBRetainCycleDetector">FBRetainCycleDetector</a>.</p>
+<h3 id="记在最后"><a href="#记在最后" class="headerlink" title="记在最后"></a>记在最后</h3><p>文章的内容也是因为项目中同时用到了<a target="_blank" rel="noopener" href="https://github.com/ReactiveCocoa/ReactiveCocoa">ReactiveCocoa</a>和自定义的<strong>Block</strong>, 众所周知<code>RAC</code>这个框架能给项目带来很多便利, 由此引出了这些文字, 若有错误之处, 还请多多包涵. </p>
+<p>准备将Blog重新构建一套, 增加一些实用的功能(羡慕别人的评论区)~</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84Block%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">简单的Block循环引用问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block%E5%B5%8C%E5%A5%97%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">Block嵌套的循环引用问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%8F%E5%88%A9"><span class="toc-number">3.</span> <span class="toc-text">福利</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">3.1.</span> <span class="toc-text">记在最后</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&text=iOS Block嵌套引起的循环引用"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&is_video=false&description=iOS Block嵌套引起的循环引用"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS Block嵌套引起的循环引用&body=Check out this article: https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&title=iOS Block嵌套引起的循环引用"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&name=iOS Block嵌套引起的循环引用&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://yiiff.github.io/2018/03/06/2018-03-06-iOS%20Block%E5%B5%8C%E5%A5%97%E5%BC%95%E8%B5%B7%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8/&t=iOS Block嵌套引起的循环引用"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Jo
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://about.me/xzhou">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Yiiff">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
