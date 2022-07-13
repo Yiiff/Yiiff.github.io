@@ -1,3 +1,4 @@
+hexo clean
 info=$1
 if ["$info" = ""];
 then info=":pencil: update content"
