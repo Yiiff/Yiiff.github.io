@@ -1,5 +1,5 @@
 ---
-title: ':memo: SQLMAP ESSENTIALS-1682980057'
+title: :memo SQLMAP ESSENTIALS
 date: 2023-05-02 06:27:38
 tags:
 ---
