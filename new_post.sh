@@ -2,10 +2,9 @@
 
 function create_new_post() {
     local title="$1"
-    local timestamp=$(date +%s)
-    local post_title=":memo: ${title:-无题}-$timestamp"
+    local post_title="${title:-无题}"
     echo "新笔记 - [$post_title]"
-    hexo new post "$post_title"
+    hexo new post "$post_title" && open "$(hexo config | grep "post_asset_folder" | cut -d ":" -f 2 | sed 's/ //g')/$post_title/index.md"
 }
 
 function main() {
