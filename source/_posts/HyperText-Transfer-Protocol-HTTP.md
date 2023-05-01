@@ -1,5 +1,5 @@
 ---
-title: ':memo: [WEB REQUESTS] HyperText Transfer Protocol (HTTP)-1680980212'
+title: HyperText Transfer Protocol (HTTP)
 date: 2023-04-09 02:56:53
 tags: BugBounty
 ---
