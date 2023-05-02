@@ -4,7 +4,7 @@ tags: Injection Cybersecurit 数据库安全
 date: 2023-05-02 10:52:32
 ---
 
-# 0x01 介绍
+## 0x01 介绍
 
 大多数现代 Web 应用程序在后端使用数据库结构。此类数据库用于存储和检索与 Web 应用程序相关的数据，从实际 Web 内容到用户信息和内容等。为了使 Web 应用程序动态化，Web 应用程序必须与数据库实时交互。当来自用户的 HTTP(S) 请求到达时，Web 应用程序的后端将向数据库发出查询以构建响应。这些查询可以包括来自 HTTP(S) 请求的信息或其他相关信息。
 
@@ -16,7 +16,7 @@ SQL 注入是指针对关系数据库的攻击，例如`MySQL`（而非关系数
 
 ------
 
-## SQL 注入 (SQLi)
+### SQL 注入 (SQLi)
 
 Web 应用程序中可能存在许多类型的注入漏洞，例如 HTTP 注入、代码注入和命令注入。然而，最常见的例子是 SQL 注入。当恶意用户试图传递更改 Web 应用程序发送到数据库的最终 SQL 查询的输入时，就会发生 SQL 注入，从而使用户能够直接对数据库执行其他意外的 SQL 查询。
 
@@ -26,7 +26,7 @@ Web 应用程序中可能存在许多类型的注入漏洞，例如 HTTP 注入�
 
 ------
 
-## 用例和影响
+### 用例和影响
 
 SQL 注入可能会产生巨大的影响，尤其是在后端服务器和数据库的权限非常松懈的情况下。
 
@@ -36,11 +36,11 @@ SQL 注入的另一个用例是破坏预期的 Web 应用程序逻辑。最常�
 
 ------
 
-## 预防
+### 预防
 
 SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服务器和数据库权限引起的。稍后，我们将讨论通过安全编码方法（例如用户输入清理和验证以及适当的后端用户权限和控制）来减少易受 SQL 注入攻击的机会的方法。
 
-# 0x02 数据库简介
+## 0x02 数据库简介
 
 在我们了解 SQL 注入之前，我们需要更多地了解数据库和结构化查询语言 (SQL)，哪些数据库将执行必要的查询。网络应用程序利用后端数据库来存储与网络应用程序相关的各种内容和信息。这可以是核心 Web 应用程序资产，如图像和文件、内容（如帖子和更新）或用户数据（如用户名和密码）。
 
@@ -48,7 +48,7 @@ SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服�
 
 ------
 
-## 数据库管理系统
+### 数据库管理系统
 
 数据库管理系统 (DBMS) 有助于创建、定义、托管和管理数据库。随着时间的推移，设计了各种 DBMS，例如基于文件、关系 DBMS (RDBMS)、NoSQL、基于图形和键/值存储。
 
@@ -64,7 +64,7 @@ SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服�
 
 ------
 
-## 架构
+### 架构
 
 下图详细说明了一个两层架构。
 
@@ -76,13 +76,13 @@ SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服�
 
 可以在同一台主机上托管应用程序服务器和 DBMS。但是，具有支持许多用户的大量数据的数据库通常单独托管以提高性能和可伸缩性。
 
-# 0x03 数据库类型
+## 0x03 数据库类型
 
 一般来说，数据库分为`Relational Databases`和`Non-Relational Databases`。只有关系数据库使用 SQL，而非关系数据库使用多种通信方法。
 
 ------
 
-## 关系数据库
+### 关系数据库
 
 关系数据库是最常见的数据库类型。它使用模式、模板来指示存储在数据库中的数据结构。例如，我们可以想象一家向其客户销售产品的公司拥有关于这些产品的去向、销售对象和数量的某种形式的存储知识。然而，这通常是在后端完成的，而在前端没有明显的通知。每种方法都可以使用不同类型的关系数据库。例如，第一个表可以存储和显示基本的客户信息，第二个表可以存储销售的产品数量及其成本，第三个表可以列举谁购买了这些产品以及支付数据。
 
@@ -102,7 +102,7 @@ SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服�
 
 ------
 
-## 非关系数据库
+### 非关系数据库
 
 非关系数据库（也称为`NoSQL`数据库）不使用表、行和列或主键、关系或模式。相反，NoSQL 数据库根据存储的数据类型使用各种存储模型来存储数据。由于没有为数据库定义的结构，NoSQL 数据库具有很强的可扩展性和灵活性。因此，在处理定义和结构不是很好的数据集时，NoSQL 数据库将是存储此类数据的最佳选择。NoSQL 数据库有四种常见的存储模型：
 
@@ -136,9 +136,9 @@ SQL 注入通常是由编码不当的 Web 应用程序或不安全的后端服�
 
 NoSQL 数据库最常见的示例是`MongoDB`.
 
-# 0x04 SQL 注入简介
+## 0x04 SQL 注入简介
 
-## 在 Web 应用程序中使用 SQL
+### 在 Web 应用程序中使用 SQL
 
 首先，让我们看看 Web 应用程序如何使用 MySQL 数据库来存储和检索数据。一旦在后端服务器上安装并设置了 DBMS 并启动并运行，Web 应用程序就可以开始利用它来存储和检索数据。
 
@@ -169,7 +169,7 @@ If we use user-input within an SQL query, and if not securely coded, it may caus
 
 ------
 
-## 什么是注射？
+### 什么是注射？
 
 在上面的示例中，我们接受用户输入并将其直接传递给 SQL 查询而不进行清理。
 
@@ -179,7 +179,7 @@ If we use user-input within an SQL query, and if not securely coded, it may caus
 
 ------
 
-## SQL注入
+### SQL注入
 
 当用户输入被输入到 SQL 查询字符串中而没有正确清理或过滤输入时，就会发生 SQL 注入。前面的示例展示了如何在 SQL 查询中使用用户输入，并且它没有使用任何形式的输入清理：
 
@@ -215,7 +215,7 @@ select * from logins where username like '%1'; DROP TABLE users;'
 
 ------
 
-## 语法错误
+### 语法错误
 
 前面的 SQL 注入示例将返回错误：
 
@@ -239,7 +239,7 @@ select * from logins where username like '%1'; DROP TABLE users;'
 
 ------
 
-## SQL注入的类型
+### SQL注入的类型
 
 SQL 注入根据我们检索其输出的方式和位置进行分类。
 
@@ -257,7 +257,7 @@ SQL 注入根据我们检索其输出的方式和位置进行分类。
 
 在本模块中，我们将只专注于通过学习 SQL 注入来介绍`Union Based`SQL 注入。
 
-# 0x05 颠覆查询逻辑
+## 0x05 颠覆查询逻辑
 
 ------
 
@@ -265,7 +265,7 @@ SQL 注入根据我们检索其输出的方式和位置进行分类。
 
 ------
 
-## 身份验证绕过
+### 身份验证绕过
 
 考虑以下管理员登录页面。
 
@@ -289,7 +289,7 @@ SELECT * FROM logins WHERE username='admin' AND password = 'p@ssw0rd';
 
 ------
 
-## SQLi 发现
+### SQLi 发现
 
 在我们开始破坏 Web 应用程序的逻辑并试图绕过身份验证之前，我们首先必须测试登录表单是否容易受到 SQL 注入的攻击。为此，我们将尝试在我们的用户名后添加以下有效负载之一，看看它是否会导致任何错误或改变页面的行为方式：
 
@@ -317,7 +317,7 @@ SELECT * FROM logins WHERE username=''' AND password = 'something';
 
 ------
 
-## 或注射
+### 或注射
 
 `true`无论输入的用户名和密码如何，我们都需要查询始终返回，以绕过身份验证。为此，我们可以`OR`在 SQL 注入中滥用运算符。
 
@@ -353,7 +353,7 @@ SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something
 
 ------
 
-## 使用 OR 运算符绕过身份验证
+### 使用 OR 运算符绕过身份验证
 
 让我们尝试将此作为用户名并查看响应。 ![注入成功](https://p.ipic.vip/axfg4d.png)
 
@@ -375,13 +375,13 @@ SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something
 
 这是有效的，因为查询的计算结果与`true`用户名或密码无关。
 
-# 0x06 使用注释
+## 0x06 使用注释
 
 本节将介绍如何使用注释来颠覆更高级的 SQL 查询的逻辑，并最终得到一个有效的 SQL 查询来绕过登录身份验证过程。
 
 ------
 
-## 注释
+### 注释
 
 就像任何其他语言一样，SQL 也允许使用注释。注释用于记录查询或忽略查询的特定部分。除了内联注释外，我们还可以在 MySQL`-- `和中使用两种类型的行注释（尽管这通常不用于 SQL 注入）。可以按如下方式使用：`#``/**/``--`
 
@@ -404,7 +404,7 @@ mysql> SELECT username FROM logins; -- Selects usernames from the logins table
 符号`#`也可以使用。
 
 ```shell-session
-mysql> SELECT * FROM logins WHERE username = 'admin'; # You can place anything here AND password = 'something'
+mysql> SELECT * FROM logins WHERE username = 'admin'; ## You can place anything here AND password = 'something'
 
 +----+----------+----------+---------------------+
 | id | username | password | date_of_joining     |
@@ -420,7 +420,7 @@ mysql> SELECT * FROM logins WHERE username = 'admin'; # You can place anything h
 
 ------
 
-## 带有注释的身份验证绕过
+### 带有注释的身份验证绕过
 
 让我们回到我们之前的例子并注入`admin'-- `我们的用户名。最终查询将是：
 
@@ -438,7 +438,7 @@ SELECT * FROM logins WHERE username='admin'-- ' AND password = 'something';
 
 ------
 
-## 另一个例子
+### 另一个例子
 
 如果应用程序需要先检查特定条件，SQL 支持使用括号。括号内的表达式优先于其他运算符并首先计算。让我们来看这样一个场景：
 
@@ -468,13 +468,13 @@ SELECT * FROM logins WHERE username='admin'-- ' AND password = 'something';
 SELECT * FROM logins where (username='admin')
 ```
 
-# 0x07 Union Clause
+## 0x07 Union Clause
 
 到目前为止，我们只是在操纵原始查询来颠覆 Web 应用程序逻辑并绕过身份验证，使用运算符`OR`和注释。然而，另一种类型的 SQL 注入是注入与原始查询一起执行的整个 SQL 查询。本节将通过使用 MySQL`Union`子句来演示这一点`SQL Union Injection`。
 
 ------
 
-## Union
+### Union
 
 在开始学习 Union Injection 之前，我们应该先了解一下 SQL Union 子句。[Union](https://dev.mysql.com/doc/refman/8.0/en/union.html)子句用于组合多个`SELECT`语句的结果。这意味着通过`UNION`注入，我们将能够`SELECT`从多个表和数据库中跨 DBMS 转储和转储数据。让我们尝试`UNION`在示例数据库中使用运算符。首先，让我们看一下表的内容`ports`：
 
@@ -526,7 +526,7 @@ mysql> SELECT * FROM ports UNION SELECT * FROM ships;
 
 ------
 
-## 偶数列
+### 偶数列
 
 一条`UNION`语句只能对`SELECT`具有相同列数的语句进行操作。例如，如果我们尝试`UNION`两个具有不同列数的结果的查询，我们会收到以下错误：
 
@@ -554,7 +554,7 @@ SELECT * from products where product_id = '1' UNION SELECT username, password fr
 
 ------
 
-## 非偶数列
+### 非偶数列
 
 我们会发现原始查询的列数通常与我们要执行的 SQL 查询的列数不同，因此我们必须解决这个问题。例如，假设我们只有一列。在这种情况下，我们希望`SELECT`，我们可以为剩余的必需列放置垃圾数据，以便我们正在处理的列总数`UNION`与原始查询相同。
 
@@ -590,7 +590,7 @@ mysql> SELECT * from products where product_id UNION SELECT username, 2, 3, 4 fr
 
 正如我们所见，我们想要的 ' `UNION SELECT username from passwords`' 查询输出位于第二行的第一列，而数字填充了其余列。
 
-# 0x08 Union Injection
+## 0x08 Union Injection
 
 现在我们知道 Union 子句是如何工作的以及如何使用它让我们学习如何在我们的 SQL 注入中使用它。让我们来看下面的例子：
 
@@ -604,14 +604,14 @@ mysql> SELECT * from products where product_id UNION SELECT username, 2, 3, 4 fr
 
 ------
 
-## 检测列数
+### 检测列数
 
 在继续使用基于联合的查询之前，我们需要找到服务器选择的列数。有两种检测列数的方法：
 
 - 使用`ORDER BY`
 - 使用`UNION`
 
-#### 使用 ORDER BY
+##### 使用 ORDER BY
 
 检测列数的第一种方法是通过`ORDER BY`我们之前讨论过的函数。我们必须注入一个查询，该查询按我们指定的列对结果进行排序，“即第 1 列、第 2 列等等”，直到我们收到一个错误，指出指定的列不存在。
 
@@ -645,7 +645,7 @@ mysql> SELECT * from products where product_id UNION SELECT username, 2, 3, 4 fr
 
 这意味着该表恰好有 4 列。
 
-#### 使用 UNION
+##### 使用 UNION
 
 另一种方法是尝试使用不同数量的列进行联合注入，直到我们成功取回结果。第一个方法总是返回结果，直到我们遇到错误，而这个方法总是给出错误，直到我们获得成功。我们可以从注入一个 3 列`UNION`查询开始：
 
@@ -669,7 +669,7 @@ cn' UNION select 1,2,3,4-- -
 
 ------
 
-## 注射位置
+### 注射位置
 
 虽然查询可能返回多列，但 Web 应用程序可能只显示其中的一部分。因此，如果我们将查询注入到页面上未打印的列中，我们将无法获得其输出。这就是为什么我们需要确定将哪些列打印到页面，以确定在何处放置我们的注入。在前面的示例中，虽然注入的查询返回 1、2、3 和 4，但我们在页面上只看到 2、3 和 4 作为输出数据返回给我们：
 
@@ -687,13 +687,13 @@ cn' UNION select 1,@@version,3,4-- -
 
 如我们所见，我们可以获得显示的数据库版本。现在我们知道如何形成我们的 Union SQL 注入有效负载，以成功地获得打印在页面上的查询输出。在下一节中，我们将讨论如何枚举数据库并从其他表和数据库中获取数据。
 
-# 0x09 数据库枚举
+## 0x09 数据库枚举
 
 在前面的部分中，我们了解了不同的 SQL 查询`MySQL`和 SQL 注入以及如何使用它们。本节将使用所有这些，并在 SQL 注入中使用 SQL 查询从数据库中收集数据。
 
 ------
 
-## MySQL指纹识别
+### MySQL指纹识别
 
 在枚举数据库之前，我们通常需要确定我们正在处理的 DBMS 类型。这是因为每个 DBMS 都有不同的查询，知道它是什么将帮助我们知道使用什么查询。
 
@@ -715,7 +715,7 @@ cn' UNION select 1,@@version,3,4-- -
 
 ------
 
-## INFORMATION_SCHEMA 数据库
+### INFORMATION_SCHEMA 数据库
 
 要使用从表中提取数据`UNION SELECT`，我们需要正确地形成我们的`SELECT`查询。为此，我们需要以下信息：
 
@@ -737,7 +737,7 @@ SELECT * FROM my_database.users;
 
 ------
 
-## 图式
+### 图式
 
 要开始我们的枚举，我们应该找到 DBMS 上可用的数据库。数据库中的表[SCHEMATA](https://dev.mysql.com/doc/refman/8.0/en/information-schema-schemata-table.html)`INFORMATION_SCHEMA`包含有关服务器上所有数据库的信息。它用于获取数据库名称，以便我们可以查询它们。该`SCHEMA_NAME`列包含当前存在的所有数据库名称。
 
@@ -782,7 +782,7 @@ cn' UNION select 1,database(),2,3-- -
 
 ------
 
-## 桌子
+### 桌子
 
 在我们从数据库中转储数据之前`dev`，我们需要获取表的列表以使用`SELECT`语句查询它们。要查找数据库中的所有表，我们可以使用数据库`TABLES`中的表`INFORMATION_SCHEMA`。
 
@@ -802,7 +802,7 @@ cn' UNION select 1,TABLE_NAME,TABLE_SCHEMA,4 from INFORMATION_SCHEMA.TABLES wher
 
 ------
 
-## 列
+### 列
 
 要转储表的数据`credentials`，首先要找到表中的列名，可以在数据库`COLUMNS`中的表中找到`INFORMATION_SCHEMA`。COLUMNS表包含有关所有数据库中存在的所有列的信息[。](https://dev.mysql.com/doc/refman/8.0/en/information-schema-columns-table.html)这有助于我们找到查询表的列名。、和列可用于实现此目的`COLUMN_NAME`。正如我们之前所做的那样，让我们尝试使用此有效负载来查找表中的列名：`TABLE_NAME``TABLE_SCHEMA``credentials`
 
@@ -816,7 +816,7 @@ cn' UNION select 1,COLUMN_NAME,TABLE_NAME,TABLE_SCHEMA from INFORMATION_SCHEMA.C
 
 ------
 
-## 数据
+### 数据
 
 现在我们有了所有的信息，我们可以形成我们的查询来从数据库中的表中`UNION`转储`username`和`password`列的数据。我们可以用and代替第 2 列和第 3 列：`credentials``dev``username``password`
 
@@ -830,17 +830,17 @@ cn' UNION select 1, username, password, 4 from dev.credentials-- -
 
 我们能够获取`credentials`表中的所有条目，其中包含密码哈希和 API 密钥等敏感信息。
 
-# 0x10 读取文件
+## 0x10 读取文件
 
 除了从 DBMS 中的各种表和数据库中收集数据外，SQL 注入还可以用于执行许多其他操作，例如在服务器上读取和写入文件，甚至在后端服务器上获得远程代码执行。
 
 ------
 
-## 特权
+### 特权
 
 读取数据比写入数据更为常见，在现代 DBMS 中，写入数据严格保留给特权用户使用，因为它会导致系统利用，正如我们将看到的那样。例如，在 中`MySQL`，DB 用户必须有权`FILE`将文件的内容加载到表中，然后从该表中转储数据并读取文件。因此，让我们从收集有关我们在数据库中的用户权限的数据开始，以决定我们是否将文件读取和/或写入后端服务器。
 
-#### 数据库用户
+##### 数据库用户
 
 首先，我们必须确定我们在数据库中是哪个用户。虽然我们不一定需要数据库管理员 (DBA) 权限来读取数据，但在现代 DBMS 中这变得越来越需要，因为只有 DBA 才被授予此类权限。这同样适用于其他常见的数据库。如果我们确实拥有 DBA 权限，那么我们更有可能拥有文件读取权限。如果我们不这样做，那么我们必须检查我们的特权，看看我们能做什么。为了能够找到我们当前的数据库用户，我们可以使用以下任何查询：
 
@@ -868,7 +868,7 @@ cn' UNION SELECT 1, user, 3, 4 from mysql.user-- -
 
 这是非常有前途的，因为根用户很可能是 DBA，这给了我们很多特权。
 
-#### 用户权限
+##### 用户权限
 
 现在我们知道了我们的用户，我们可以开始寻找我们对那个用户有什么特权。首先，我们可以通过以下查询来测试我们是否拥有超级管理员权限：
 
@@ -910,7 +910,7 @@ cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_priv
 
 ------
 
-## 加载文件
+### 加载文件
 
 现在我们知道我们有足够的权限来读取本地系统文件，让我们使用函数来做到这一点`LOAD_FILE()`。LOAD_FILE [()](https://mariadb.com/kb/en/load_file/)函数可用于 MariaDB / MySQL 从文件中读取数据。该函数只接受一个参数，即文件名。以下查询是如何读取文件的示例`/etc/passwd`：
 
@@ -932,7 +932,7 @@ cn' UNION SELECT 1, LOAD_FILE("/etc/passwd"), 3, 4-- -
 
 ------
 
-## 另一个例子
+### 另一个例子
 
 我们知道当前页面是`search.php`。默认的 Apache webroot 是`/var/www/html`. 让我们尝试阅读文件的源代码`/var/www/html/search.php`。
 
@@ -948,13 +948,13 @@ cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
 
 源代码向我们展示了完整的 PHP 代码，可以对其进行进一步检查以查找敏感信息（如数据库连接凭据）或查找更多漏洞。
 
-# 0x11 写入文件
+## 0x11 写入文件
 
 当涉及到将文件写入后端服务器时，它在现代 DBMS 中变得更加受限，因为我们可以利用它在远程服务器上编写一个 web shell，从而执行代码并接管服务器。这就是现代 DBMS 默认禁用文件写入并要求 DBA 具有某些权限才能写入文件的原因。在写文件之前，我们首先要检查自己是否有足够的权限，DBMS是否允许写文件。
 
 ------
 
-## 写文件权限
+### 写文件权限
 
 为了能够使用 MySQL 数据库将文件写入后端服务器，我们需要三件事：
 
@@ -964,7 +964,7 @@ cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
 
 我们已经发现我们的当前用户具有`FILE`写入文件所需的权限。我们现在必须检查 MySQL 数据库是否具有该权限。这可以通过检查全局变量来完成`secure_file_priv`。
 
-#### secure_file_priv
+##### secure_file_priv
 
 [secure_file_priv](https://mariadb.com/kb/en/server-system-variables/#secure_file_priv)变量用于确定从何处读取/写入文件。一个空值可以让我们从整个文件系统中读取文件。否则，如果设置了某个目录，我们只能从变量指定的文件夹中读取。另一方面，`NULL`意味着我们不能从任何目录读/写。MariaDB 将此变量默认设置为空，如果用户有权限，这允许我们读/写任何文件`FILE`。但是，`MySQL`用作`/var/lib/mysql-files`默认文件夹。这意味着`MySQL`使用默认设置无法通过注入读取文件。更糟糕的是，一些现代配置默认为`NULL`，这意味着我们无法在系统内的任何地方读取/写入文件。
 
@@ -996,7 +996,7 @@ cn' UNION SELECT 1, variable_name, variable_value, 4 FROM information_schema.glo
 
 ------
 
-## 选择进入 OUTFILE
+### 选择进入 OUTFILE
 
 现在我们已经确认我们的用户应该将文件写入后端服务器，让我们尝试使用语句来做到这一点`SELECT .. INTO OUTFILE`。SELECT [INTO OUTFILE](https://mariadb.com/kb/en/select-into-outfile/)语句可用于将来自选择查询的数据写入文件。这通常用于从表中导出数据。
 
@@ -1049,7 +1049,7 @@ sl1aun@htb[/htb]$ ls -la /tmp/test.txt
 
 ------
 
-## 通过 SQL 注入写入文件
+### 通过 SQL 注入写入文件
 
 让我们尝试向 webroot 写入一个文本文件并验证我们是否具有写入权限。下面的查询应该写入`file written successfully!`文件`/var/www/html/proof.txt`，然后我们可以在 Web 应用程序上访问该文件：
 
@@ -1075,7 +1075,7 @@ cn' union select 1,'file written successfully!',3,4 into outfile '/var/www/html/
 
 ------
 
-## 编写网络外壳
+### 编写网络外壳
 
 确认写入权限后，我们可以继续将 PHP web shell 写入 webroot 文件夹。我们可以编写如下的PHP webshell来直接在后台服务器上执行命令：
 
@@ -1099,7 +1099,7 @@ cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/
 
 该`id`命令的输出确认我们执行了代码并以用户身份运行`www-data`。
 
-# 0x12 缓解 SQL 注入
+## 0x12 缓解 SQL 注入
 
 ------
 
@@ -1107,7 +1107,7 @@ cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/
 
 ------
 
-## 输入消毒
+### 输入消毒
 
 这是我们之前讨论的身份验证绕过部分的代码片段：
 
@@ -1149,7 +1149,7 @@ echo "Executing query: " . $query . "<br /><br />";
 
 ------
 
-## 输入验证
+### 输入验证
 
 还可以根据用于查询的数据验证用户输入，以确保它与预期输入相匹配。例如，当将电子邮件作为输入时，我们可以验证输入的形式是`...@email.com`，等等。
 
@@ -1200,7 +1200,7 @@ $q = "Select * from ports where port_code ilike '%" . $code . "%'";
 
 ------
 
-## 用户权限
+### 用户权限
 
 正如最初讨论的那样，DBMS 软件允许创建具有细粒度权限的用户。我们应该确保查询数据库的用户只有最小权限。
 
@@ -1252,13 +1252,13 @@ ERROR 1142 (42000): SELECT command denied to user 'reader'@'localhost' for table
 
 ------
 
-## Web 应用防火墙
+### Web 应用防火墙
 
 Web 应用程序防火墙 (WAF) 用于检测恶意输入并拒绝包含它们的任何 HTTP 请求。即使应用程序逻辑存在缺陷，这也有助于防止 SQL 注入。WAF 可以是开源的 (ModSecurity) 或高级的 (Cloudflare)。他们中的大多数都有基于常见网络攻击配置的默认规则。例如，任何包含该字符串的请求`INFORMATION_SCHEMA`都将被拒绝，因为它通常在利用 SQL 注入时使用。
 
 ------
 
-## 参数化查询
+### 参数化查询
 
 另一种确保输入被安全清理的方法是使用参数化查询。参数化查询包含输入数据的占位符，然后由驱动程序转义并传递。我们不是直接将数据传递到 SQL 查询，而是使用占位符，然后用 PHP 函数填充它们。
 
@@ -1284,6 +1284,7 @@ Web 应用程序防火墙 (WAF) 用于检测恶意输入并拒绝包含它们的
 
 ------
 
-## 结论
+### 结论
 
 上面的列表并不详尽，仍然可以根据应用程序逻辑利用 SQL 注入。显示的代码示例基于 PHP，但逻辑适用于所有常见语言和库。
+
