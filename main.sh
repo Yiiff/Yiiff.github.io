@@ -76,7 +76,7 @@ function main() {
         fi
 
         # 显示花漾字
-        figlet "workbench4blog"
+        figlet "workbench blog"
         echo "请选择要执行的操作："
         echo "1. 创建新文章"
         echo "2. 清理并部署博客"
