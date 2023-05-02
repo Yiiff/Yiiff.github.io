@@ -3,9 +3,10 @@
 # 定义函数：创建新文章
 function create_new_post() {
     local title="$1"
-    local post_title="${title:-无题}"
+    local post_title="杂记：$(date +%Y年%m月%d日)"
     echo -e "\033[32m新笔记 - [$post_title]\033[0m"
-    hexo new post "$post_title"
+    read -p "请输入标签，多个标签用空格隔开: " tags
+    hexo new post "$post_title" --tags="$tags"
     read -p "是否打开文件？(y/n)" open_file
     if [ "$open_file" == "y" ]; then
         if command -v open &> /dev/null; then
@@ -21,6 +22,7 @@ function create_new_post() {
         fi
     fi
 }
+
 
 # 定义函数：执行 hexo 命令
 function run_hexo_command() {
