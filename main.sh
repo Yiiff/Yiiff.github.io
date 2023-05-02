@@ -143,8 +143,9 @@ function main() {
         figlet "workbench blog"
         echo "请选择要执行的操作："
         echo "1. 创建新文章"
-        echo "2. 清理、提交并部署"
-        echo "3. 文章管理"
+        echo "2. 提交"
+        echo "3. 部署"
+        echo "4. 文章管理"
         echo "99. 退出"
         read -p "请输入数字：" choice
         case "$choice" in
@@ -152,11 +153,12 @@ function main() {
                 create_new_post
                 ;;
             2)
-                run_hexo_command "hexo clean"
                 commit_changes
-                run_hexo_command "hexo clean && hexo g && hexo d"
                 ;;
             3)
+                run_hexo_command "hexo clean && hexo g && hexo d"
+                ;;
+            4)
                 manage_posts
                 ;;
             99)
